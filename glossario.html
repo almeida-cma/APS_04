@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANVIL WORKS - Smart Glossário</title>
+    <style>
+        :root {
+            /* Paleta Conhecimento / Biblioteca */
+            --primary: #0f766e; /* Verde Esmeralda (Teal) */
+            --secondary: #0369a1; /* Azul Oceano */
+            --accent: #14b8a6; /* Turquesa */
+            --danger: #e11d48; /* Vermelho Deleção */
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --white: #ffffff;
+            --border: #cbd5e1;
+            --card-bg: #f1f5f9;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .header {
+            background: var(--white);
+            padding: 3rem 2rem;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+            border-top: 5px solid var(--primary);
+            background-image: linear-gradient(to right, #ffffff, #f0fdfa);
+        }
+
+        .header h1 {
+            color: var(--dark);
+            font-size: 2.8rem;
+            margin-bottom: 0.5rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .header h1 span { color: var(--primary); }
+        .header p { color: #64748b; font-size: 1.2rem; font-weight: 500; }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem 3rem 2rem; }
+
+        /* Seções */
+        .section {
+            background: var(--white); border-radius: 12px; margin-bottom: 2.5rem;
+            overflow: hidden; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); transition: transform 0.3s ease;
+            border: 1px solid var(--border);
+        }
+        .section:hover { transform: translateY(-3px); box-shadow: 0 20px 25px -5px rgba(15, 118, 110, 0.1); }
+
+        .section-title {
+            background: var(--white); color: var(--dark); padding: 1.2rem 2rem; font-size: 1.4rem; font-weight: bold;
+            display: flex; align-items: center; flex-wrap: wrap; gap: 10px; border-bottom: 1px solid var(--border);
+        }
+
+        .section-title span {
+            background: var(--primary); color: var(--white); padding: 0.3rem 1rem;
+            border-radius: 20px; font-size: 0.85rem; margin-left: auto; font-weight: 600;
+        }
+
+        .section-content { padding: 2rem; }
+
+        /* Cards */
+        .requirements-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+        .card {
+            background: var(--white); border: 1px solid var(--border); border-top: 4px solid var(--primary);
+            padding: 1.5rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); transition: all 0.3s ease;
+        }
+        .card:hover { border-top-color: var(--secondary); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); }
+        .card h3 { color: var(--dark); margin-bottom: 0.8rem; display: flex; align-items: center; gap: 10px; }
+        .card p { color: #475569; }
+
+        /* Tabelas */
+        .rule-table { width: 100%; border-collapse: collapse; border-radius: 8px; overflow: hidden; }
+        .rule-table th, .rule-table td { border: 1px solid var(--border); padding: 1rem; text-align: left; font-size: 1rem; }
+        .rule-table th { background: var(--card-bg); color: var(--dark); font-weight: 600; }
+
+        /* Fluxo */
+        .flow {
+            background: #f0fdfa; padding: 2rem; border-radius: 8px; text-align: center;
+            font-family: 'Courier New', monospace; font-size: 1.1rem; font-weight: bold;
+            color: var(--primary); border: 2px dashed #99f6e4; line-height: 2;
+        }
+
+        /* Mockup do App */
+        .layout-visual {
+            background: #e2e8f0; border-radius: 12px; padding: 3rem 2rem; position: relative; display: flex; justify-content: center;
+        }
+        .modern-app { background: var(--white); border-radius: 12px; padding: 2rem; width: 100%; max-width: 600px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); }
+        
+        .app-title { font-size: 1.6rem; font-weight: bold; margin-bottom: 1.5rem; color: var(--primary); display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border); padding-bottom: 10px; }
+        .badge { background: #ccfbf1; color: var(--primary); font-size: 0.8rem; padding: 4px 12px; border-radius: 20px; }
+
+        .input-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+        .input-group label { font-size: 0.85rem; font-weight: bold; color: #64748b; text-transform: uppercase; }
+        .input-field { padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.95rem; background: #f8fafc; }
+        .input-field:focus { outline: none; border-color: var(--primary); background: #fff; }
+        textarea.input-field { resize: vertical; min-height: 60px; }
+        
+        .btn-add { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 1rem; width: 100%; margin-top: 10px; transition: 0.3s; }
+        .btn-add:hover { background: var(--secondary); }
+
+        .task-list { margin-top: 2.5rem; display: flex; flex-direction: column; gap: 15px; }
+        .glossary-card { background: var(--card-bg); border-left: 4px solid var(--primary); border-radius: 6px; padding: 15px; position: relative; }
+        .term-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .term-title { font-weight: 800; color: var(--dark); font-size: 1.2rem; }
+        .term-desc { color: #475569; font-size: 0.95rem; margin-bottom: 10px; line-height: 1.5; }
+        .task-link { color: var(--secondary); font-size: 0.85rem; text-decoration: none; font-weight: bold; }
+        .task-link:hover { text-decoration: underline; }
+        .btn-del { color: var(--danger); background: transparent; border: 1px solid var(--danger); padding: 4px 8px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.8rem; transition: 0.2s;}
+        .btn-del:hover { background: var(--danger); color: white; }
+
+        .export-area { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px dashed var(--border); display: flex; gap: 10px; justify-content: center; }
+        .btn-json { background: var(--white); color: var(--dark); border: 1px solid var(--border); padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 5px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+
+        /* Componentes Dropdown */
+        .component-list { display: flex; flex-direction: column; gap: 1rem; }
+        .component-item { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+        .component-header { background: var(--card-bg); padding: 1rem 1.5rem; font-weight: bold; cursor: pointer; display: flex; justify-content: space-between; align-items: center; color: var(--dark); }
+        .component-props { padding: 0; display: none; background: var(--white); }
+        .component-props.active { display: block; }
+        .props-table { width: 100%; border-collapse: collapse; }
+        .props-table td { padding: 0.8rem 1.5rem; border-bottom: 1px solid var(--border); }
+        .props-table td:first-child { font-weight: 600; width: 35%; color: var(--primary); }
+        .props-table td:last-child { color: #475569; font-family: monospace; font-size: 1.05rem;}
+
+        /* Código */
+        .code-block { background: #1e1e1e; border-radius: 8px; overflow: hidden; }
+        .code-header { background: #2d2d2d; color: #e5e7eb; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; font-family: monospace; }
+        .code-content { padding: 1.5rem; overflow-x: auto; }
+        .code-content pre { margin: 0; font-family: 'Consolas', monospace; font-size: 0.95rem; line-height: 1.6; color: #d4d4d4; }
+        .code-content pre .keyword { color: #569cd6; } 
+        .code-content pre .comment { color: #6a9955; font-style: italic; } 
+        .code-content pre .function { color: #dcdcaa; } 
+        .code-content pre .string { color: #ce9178; } 
+        
+        .copy-btn { background: var(--primary); color: white; border: none; padding: 0.4rem 1rem; border-radius: 4px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .copy-btn:hover { background: var(--secondary); }
+
+        .summary-box { background: var(--primary); color: white; padding: 3rem; border-radius: 12px; text-align: center; box-shadow: 0 10px 25px rgba(15, 118, 110, 0.3); }
+        .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+        .summary-item { background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--accent); font-weight: 500; text-align: left; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Smart <span>Glossário</span></h1>
+        <p>Guia Didático Completo - CRUD, JSON e Construção de Base de Conhecimento no Anvil</p>
+    </div>
+
+    <div class="container">
+        
+        <!-- ETAPA 1 -->
+        <div class="section">
+            <div class="section-title">
+                ✅ ETAPA 1 — REQUISITOS FUNCIONAIS
+                <span>O Motor do Dicionário</span>
+            </div>
+            <div class="section-content">
+                <div class="requirements-grid">
+                    <div class="card">
+                        <h3>➕ CREATE & READ</h3>
+                        <p>O usuário deve digitar um <strong>Termo</strong>, sua <strong>Descrição</strong> e um <strong>Link</strong> opcional. O termo deve aparecer na lista visual em formato de "Cartão".</p>
+                    </div>
+                    <div class="card">
+                        <h3>🗑️ DELETE</h3>
+                        <p>O usuário deve ser capaz de remover termos específicos do glossário caso estejam incorretos, usando um botão de exclusão ❌.</p>
+                    </div>
+                    <div class="card">
+                        <h3>💾 EXPORT & IMPORT</h3>
+                        <p>Como o glossário fica em memória RAM temporária, o app deve permitir exportar a base de dados como `.json` para o PC e importá-la futuramente.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ETAPA 2 -->
+        <div class="section">
+            <div class="section-title">
+                📋 ETAPA 2 — REGRAS DE NEGÓCIO E DADOS
+                <span>Estrutura JSON (O Dicionário Python)</span>
+            </div>
+            <div class="section-content">
+                <p style="margin-bottom: 1rem;">Para gerenciar múltiplos campos, cada termo do glossário será um <b>Dicionário Python</b> salvo dentro de uma Lista principal. Veja as chaves que usaremos:</p>
+                <table class="rule-table">
+                    <thead>
+                        <tr><th>Chave (Key)</th><th>Tipo de Dado</th><th>Descrição no Sistema</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><b>id</b></td><td>Inteiro (Timestamp)</td><td>Identificador único para podermos achar e deletar o termo correto.</td></tr>
+                        <tr><td><b>termo</b></td><td>String (Texto Curto)</td><td>A palavra conceitual (Ex: "API", "Front-end"). Não pode ser vazio.</td></tr>
+                        <tr><td><b>descricao</b></td><td>String (Texto Longo)</td><td>A explicação do significado. Capturada através de um TextArea.</td></tr>
+                        <tr><td><b>link</b></td><td>String (URL)</td><td>Opcional. Um link para artigo ou vídeo de exemplificação.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ETAPA 3 -->
+        <div class="section">
+            <div class="section-title">
+                🔄 ETAPA 3 — FLUXO DO SISTEMA
+                <span>Reatividade e Renderização</span>
+            </div>
+            <div class="section-content">
+                <div class="flow">
+                    App inicia com um Glossário Vazio: <code>self.glossario = []</code><br>
+                    ⬇<br>
+                    Usuário preenche Termo, Descrição e clica em "Adicionar"<br>
+                    ⬇<br>
+                    Python cria um Dicionário com os dados e salva em <code>self.glossario</code><br>
+                    ⬇<br>
+                    Função <code>renderizar_lista()</code> entra em ação!<br>
+                    ⬇<br>
+                    1. Limpa a tela 🧹<br>
+                    2. Lê o <code>self.glossario</code> 📖<br>
+                    3. Desenha um <b>Cartão de Estudo</b> contendo Título, Texto e Link para cada item 🎨<br>
+                    ⬇<br>
+                    Se usuário deletar um termo -> Lista Python é alterada -> Tela é re-renderizada!
+                </div>
+            </div>
+        </div>
+
+        <!-- ETAPA 4 -->
+        <div class="section">
+            <div class="section-title">
+                🎨 ETAPA 4 — PROJETO DA INTERFACE
+                <span>Design de Formulário e Cartões</span>
+            </div>
+            <div class="section-content">
+                <div class="layout-visual">
+                    <div class="modern-app">
+                        
+                        <div class="app-title">
+                            📚 Meus Termos <span class="badge">Em Memória</span>
+                        </div>
+
+                        <!-- Formulário de Entrada -->
+                        <div class="input-group">
+                            <label>1. Termo / Conceito</label>
+                            <input type="text" class="input-field" placeholder="Ex: Backend">
+                        </div>
+                        <div class="input-group">
+                            <label>2. Descrição do Significado</label>
+                            <textarea class="input-field" placeholder="Explique o que isso significa..."></textarea>
+                        </div>
+                        <div class="input-group">
+                            <label>3. Link de Exemplo (Opcional)</label>
+                            <input type="text" class="input-field" placeholder="https://...">
+                        </div>
+                        
+                        <button class="btn-add">➕ Adicionar ao Glossário</button>
+
+                        <!-- Lista Renderizada -->
+                        <div class="task-list">
+                            <!-- Cartão Exemplo -->
+                            <div class="glossary-card">
+                                <div class="term-header">
+                                    <div class="term-title">API</div>
+                                    <button class="btn-del">X Remover</button>
+                                </div>
+                                <div class="term-desc">Application Programming Interface. É uma ponte que conecta diferentes sistemas de software, permitindo que conversem entre si.</div>
+                                <a href="#" class="task-link">🔗 Acessar Exemplo</a>
+                            </div>
+                        </div>
+
+                        <!-- JSON Tools -->
+                        <div class="export-area">
+                            <button class="btn-json">⬇️ Baixar JSON</button>
+                            <button class="btn-json">⬆️ Importar JSON</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ETAPA 5 -->
+        <div class="section">
+            <div class="section-title">
+                🧩 ETAPA 5 — COMPONENTES DO ANVIL
+                <span>Conhecendo o TextArea</span>
+            </div>
+            <div class="section-content">
+                <div class="component-list">
+                    <div class="component-item">
+                        <div class="component-header" onclick="toggleProps(this)">
+                            1️⃣ Entradas de Dados (TextBox e TextArea) <span>▼</span>
+                        </div>
+                        <div class="component-props">
+                            <table class="props-table">
+                                <tr><td>Componentes</td><td>TextBox (para Termo e Link) / TextArea (para Descrição)</td></tr>
+                                <tr><td>Names</td><td>txt_termo / txt_descricao / txt_link</td></tr>
+                                <tr><td>Diferença</td><td>O TextArea permite que o usuário digite múltiplas linhas e dê "Enter".</td></tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-header" onclick="toggleProps(this)">
+                            2️⃣ Botão Adicionar <span>▼</span>
+                        </div>
+                        <div class="component-props">
+                            <table class="props-table">
+                                <tr><td>Componente</td><td>Button</td></tr>
+                                <tr><td>Name</td><td>btn_adicionar</td></tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-header" onclick="toggleProps(this)">
+                            3️⃣ Contêiner Base (A Lista) <span>▼</span>
+                        </div>
+                        <div class="component-props">
+                            <table class="props-table">
+                                <tr><td>Componente</td><td>LinearPanel</td></tr>
+                                <tr><td>Name</td><td>painel_termos</td></tr>
+                                <tr><td>Propósito</td><td>Fica vazio no Design. Ele receberá os Cartões Dinâmicos.</td></tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-header" onclick="toggleProps(this)">
+                            4️⃣ Ferramentas JSON (Button e FileLoader) <span>▼</span>
+                        </div>
+                        <div class="component-props">
+                            <table class="props-table">
+                                <tr><td>Exportar</td><td>Button (Name: btn_exportar)</td></tr>
+                                <tr><td>Importar</td><td>FileLoader (Name: fl_importar / Evento: change)</td></tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ETAPA 6 -->
+        <div class="section">
+            <div class="section-title">
+                ⚡ ETAPA 6 — EVENTOS E IMPORTAÇÕES ESPECIAIS
+                <span>Preparando o Terreno</span>
+            </div>
+            <div class="section-content">
+                <div class="card" style="border-left-color: var(--secondary);">
+                    <p><strong>🚨 O QUE PRECISA ESTAR NO TOPO DO CÓDIGO (Etapa 7):</strong></p>
+                    <ol style="margin-left: 20px; margin-top: 10px;">
+                        <li>Módulo JSON nativo do Python: <code>import json</code>.</li>
+                        <li>Módulo de arquivos do Anvil para download: <code>import anvil.media</code>.</li>
+                        <li>Construtores para a montagem dos cartões visuais: <code>from anvil import LinearPanel, FlowPanel, Label, Button, Link</code>.</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <!-- ETAPA 7 -->
+        <div class="section">
+            <div class="section-title">
+                💻 ETAPA 7 — CÓDIGO PYTHON COMPLETO
+                <span>Construção de UI Dinâmica e JSON - Copie e Cole</span>
+            </div>
+            <div class="section-content">
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>📄 form1.py</span>
+                        <button class="copy-btn" onclick="copyCode()">📋 Copiar Código</button>
+                    </div>
+                    <div class="code-content">
+                        <pre id="full-code">
+<span class="keyword">from</span> anvil <span class="keyword">import</span> *
+<span class="keyword">import</span> anvil.media
+<span class="keyword">import</span> json
+<span class="keyword">import</span> time  <span class="comment"># Para gerar IDs únicos</span>
+
+<span class="keyword">class</span> Form1(Form1Template):
+  
+  <span class="keyword">def</span> <span class="function">__init__</span>(self, **properties):
+    self.init_components(**properties)
+    
+    <span class="comment"># Memória Temporária (A Lista do Dicionário)</span>
+    self.glossario = []
+    
+    <span class="comment"># Renderiza a tela vazia ao abrir o app</span>
+    self.renderizar_lista()
+
+  <span class="comment"># ==========================================
+  # C R U D - CREATE (Adicionar Termo)
+  # ==========================================</span>
+  <span class="keyword">def</span> <span class="function">btn_adicionar_click</span>(self, **event_args):
+    termo_digitado = self.txt_termo.text
+    desc_digitada = self.txt_descricao.text
+    link_digitado = self.txt_link.text
+    
+    <span class="comment"># Validação: Obriga a preencher Termo e Descrição</span>
+    <span class="keyword">if not</span> termo_digitado <span class="keyword">or not</span> desc_digitada:
+      alert(<span class="string">"Preencha o Termo e a Descrição!"</span>)
+      <span class="keyword">return</span>
+      
+    <span class="comment"># Criação da estrutura de dados do novo item</span>
+    novo_termo = {
+      <span class="string">"id"</span>: int(time.time() * 1000), <span class="comment"># ID único baseado no relógio do PC</span>
+      <span class="string">"termo"</span>: termo_digitado,
+      <span class="string">"descricao"</span>: desc_digitada,
+      <span class="string">"link"</span>: link_digitado
+    }
+    
+    <span class="comment"># Salva na memória do Python</span>
+    self.glossario.append(novo_termo)
+    
+    <span class="comment"># Limpa os campos visuais</span>
+    self.txt_termo.text = <span class="string">""</span>
+    self.txt_descricao.text = <span class="string">""</span>
+    self.txt_link.text = <span class="string">""</span>
+    
+    <span class="comment"># Chama a reconstrução da tela</span>
+    self.renderizar_lista()
+
+  <span class="comment"># ==========================================
+  # C R U D - READ (Montar os Cartões Visuais)
+  # ==========================================</span>
+  <span class="keyword">def</span> <span class="function">renderizar_lista</span>(self):
+    <span class="comment"># Limpa tudo antes de desenhar novamente</span>
+    self.painel_termos.clear()
+    
+    <span class="keyword">for</span> item <span class="keyword">in</span> self.glossario:
+      <span class="comment"># 1. Cria a caixa principal do Cartão (LinearPanel)</span>
+      cartao = LinearPanel(role=<span class="string">"card"</span>) 
+      
+      <span class="comment"># 2. Cria o cabeçalho do cartão (Título ao lado do botão Excluir)</span>
+      linha_topo = FlowPanel(align=<span class="string">"justify"</span>)
+      
+      lbl_termo = Label(text=item[<span class="string">"termo"</span>], bold=<span class="keyword">True</span>, font_size=18, foreground=<span class="string">"#0f766e"</span>)
+      
+      btn_del = Button(text=<span class="string">"❌ Remover"</span>, foreground=<span class="string">"#e11d48"</span>)
+      btn_del.tag = item[<span class="string">"id"</span>]  <span class="comment"># Salva o ID da palavra dentro do botão</span>
+      btn_del.set_event_handler(<span class="string">'click'</span>, self.deletar_termo)
+      
+      linha_topo.add_component(lbl_termo)
+      linha_topo.add_component(btn_del)
+      
+      <span class="comment"># 3. Cria o texto da descrição</span>
+      lbl_desc = Label(text=item[<span class="string">"descricao"</span>])
+      
+      <span class="comment"># Adiciona o topo e a descrição dentro do cartão principal</span>
+      cartao.add_component(linha_topo)
+      cartao.add_component(lbl_desc)
+      
+      <span class="comment"># 4. Se existir um link, cria o componente clicável</span>
+      <span class="keyword">if</span> item[<span class="string">"link"</span>]:
+        lnk = Link(text=<span class="string">"🔗 Ver Exemplo"</span>, url=item[<span class="string">"link"</span>])
+        cartao.add_component(lnk)
+        
+      <span class="comment"># Por fim, adiciona o cartão completo no painel da tela</span>
+      self.painel_termos.add_component(cartao)
+
+
+  <span class="comment"># ==========================================
+  # C R U D - DELETE (Remover do Glossário)
+  # ==========================================</span>
+  <span class="keyword">def</span> <span class="function">deletar_termo</span>(self, sender, **event_args):
+    <span class="comment"># Pega o ID que guardamos no '.tag' do botão</span>
+    id_alvo = sender.tag
+    
+    <span class="comment"># Sobrescreve a lista ignorando o item deletado (List Comprehension)</span>
+    self.glossario = [item <span class="keyword">for</span> item <span class="keyword">in</span> self.glossario <span class="keyword">if</span> item[<span class="string">"id"</span>] != id_alvo]
+    
+    <span class="comment"># Redesenha a tela para o cartão sumir</span>
+    self.renderizar_lista()
+
+
+  <span class="comment"># ==========================================
+  # JSON - EXPORTAR (Baixar Dicionário)
+  # ==========================================</span>
+  <span class="keyword">def</span> <span class="function">btn_exportar_click</span>(self, **event_args):
+    <span class="comment"># Converte a Lista de Dicionários para formato de texto JSON</span>
+    json_texto = json.dumps(self.glossario, indent=4)
+    
+    <span class="comment"># Empacota como um arquivo para o navegador baixar</span>
+    arquivo = anvil.BlobMedia(<span class="string">'application/json'</span>, json_texto.encode(), name=<span class="string">'meu_glossario.json'</span>)
+    anvil.media.download(arquivo)
+
+
+  <span class="comment"># ==========================================
+  # JSON - IMPORTAR (Upload do FileLoader)
+  # ==========================================</span>
+  <span class="keyword">def</span> <span class="function">fl_importar_change</span>(self, file, **event_args):
+    <span class="comment"># Lê o arquivo que o usuário subiu e converte para texto</span>
+    conteudo_texto = file.get_bytes().decode(<span class="string">'utf-8'</span>)
+    
+    <span class="keyword">try</span>:
+      <span class="comment"># Carrega o JSON substituindo o glossário atual e atualiza a tela</span>
+      self.glossario = json.loads(conteudo_texto)
+      self.renderizar_lista()
+    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:
+      alert(<span class="string">"Erro: O arquivo não é um JSON de glossário válido!"</span>)
+</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ETAPA 8 -->
+        <div class="section">
+            <div class="section-title">
+                📖 ETAPA 8 — EXPLICAÇÃO DETALHADA DO CÓDIGO
+                <span>Os segredos do código dinâmico</span>
+            </div>
+            <div class="section-content">
+                <div class="requirements-grid">
+                    <div class="card">
+                        <h3>🧱 Blocos Aninhados (Nesting)</h3>
+                        <p>Diferente da To-Do List, aqui nós <b>aninhamos</b> painéis. Criamos um <code>LinearPanel</code>(o Cartão). Dentro dele, colocamos o Cabeçalho (<code>FlowPanel</code>), depois a Descrição, e depois o Link. A UI é criada como blocos de Lego empilhados.</p>
+                    </div>
+                    <div class="card">
+                        <h3>🔗 A Mágica do <code>.tag</code> e do ID</h3>
+                        <p>Como saber qual botão "Remover" deleta qual termo? Geramos um ID usando o relógio <code>time.time()</code>. Guardamos esse ID na propriedade <code>.tag</code> do Botão. No clique, lemos o tag e apagamos o termo exato da memória!</p>
+                    </div>
+                    <div class="card">
+                        <h3>🧹 O padrão Delete em Python</h3>
+                        <p>No <code>deletar_termo</code>, nós usamos *List Comprehension*. A regra é: <i>"A nova lista é igual à antiga, MAS SÓ COPIE os itens cujo ID seja DIFERENTE do botão clicado."</i> Isso extingue a palavra removida.</p>
+                    </div>
+                    <div class="card">
+                        <h3>📤 json.dumps() e BlobMedia</h3>
+                        <p><code>json.dumps()</code> "Despeja" (dumps) código Python virando texto puro em formato JSON. O <code>BlobMedia</code> empacota esse texto e avisa ao navegador: <i>"Isso é um arquivo .json, inicie o download!"</i>.</p>
+                    </div>
+                    <div class="card">
+                        <h3>📥 json.loads() e FileLoader</h3>
+                        <p>O <code>FileLoader</code> captura arquivos do PC. Com <code>file.get_bytes()</code> lemos o arquivo criptografado, decodificamos para texto, e o <code>json.loads()</code> "Carrega" (loads) o texto transformando-o novamente em uma Lista Python!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RESUMO -->
+        <div class="summary-box">
+            <h2>🎯 RESUMO DO QUE VOCÊ APRENDEU</h2>
+            <p style="color: #ccfbf1; font-size: 1.1rem; margin-top: 5px;">A base para construir qualquer Aplicativo de Gerenciamento de Dados</p>
+            
+            <div class="summary-grid">
+                <div class="summary-item">✅ Criar estruturas de dados robustas (Lista contendo Dicionários Python).</div>
+                <div class="summary-item">✅ Capturar textos multilinhas usando o componente `TextArea`.</div>
+                <div class="summary-item">✅ Gerar Layouts complexos e aninhados (`LinearPanel` + `FlowPanel`) totalmente via código.</div>
+                <div class="summary-item">✅ Executar funções C.R.U.D operando sobre IDs únicos de exclusão.</div>
+                <div class="summary-item">✅ Criar sistema de Backup Local gerando arquivos `.json` via `anvil.media`.</div>
+                <div class="summary-item">✅ Processar uploads usando o evento 'change' do `FileLoader`.</div>
+            </div>
+            <p style="margin-top: 2.5rem; font-size: 1.2rem; font-weight: bold;">🚀 Engenharia Concluída! Com esta base, você pode criar não só Glossários, mas Cardápios, Catálogos de Produtos e Diretórios de Contatos!</p>
+        </div>
+    </div>
+
+    <script>
+        function toggleProps(header) {
+            const propsDiv = header.nextElementSibling;
+            propsDiv.classList.toggle('active');
+        }
+
+        function copyCode() {
+            const codeElement = document.getElementById('full-code');
+            const code = codeElement.innerText;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                alert('📚 Código do Glossário copiado! Construa sua base de conhecimento!');
+            }).catch(err => {
+                console.error('Erro ao copiar: ', err);
+                alert('Erro ao copiar código. Pressione Ctrl+C manualmente.');
+            });
+        }
+    </script>
+</body>
+</html>

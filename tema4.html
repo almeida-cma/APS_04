@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>TEMA 04: Análise de Requisitos - Material Interativo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', 'Inter', 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fc 0%, #eef2f8 100%);
+            color: #1a2c3e;
+            line-height: 1.5;
+        }
+
+        /* Header principal */
+        .hero {
+            background: linear-gradient(125deg, #0b2b44 0%, #123e5e 100%);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+            border-bottom-left-radius: 2rem;
+            border-bottom-right-radius: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero h1 span {
+            background: #ffb74d;
+            color: #0b2b44;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+            font-size: 1.2rem;
+            display: inline-block;
+            margin-left: 0.8rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 1rem auto 0;
+            opacity: 0.92;
+        }
+
+        .badge-container {
+            margin-top: 1.5rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(4px);
+            padding: 0.4rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        /* Container principal */
+        .container {
+            max-width: 1300px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Abas de navegação */
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #dce5f0;
+            padding-bottom: 0.5rem;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #4a627a;
+            cursor: pointer;
+            border-radius: 40px;
+            transition: all 0.2s;
+        }
+
+        .tab-btn:hover {
+            background: #e2edf7;
+            color: #0b2b44;
+        }
+
+        .tab-btn.active {
+            background: #0b2b44;
+            color: white;
+            box-shadow: 0 4px 12px rgba(11,43,68,0.3);
+        }
+
+        /* Painéis de conteúdo */
+        .tab-pane {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-pane.active-pane {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+
+        /* Cards e grids */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.8rem;
+            margin: 2rem 0;
+        }
+
+        .card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid #e9f0f5;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 28px rgba(0,0,0,0.1);
+        }
+
+        .card-icon {
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 0.8rem;
+            color: #0f3b5c;
+        }
+
+        .card p, .card li {
+            color: #2c4c6e;
+        }
+
+        .example-box {
+            background: #f0f6fe;
+            border-left: 5px solid #1e88e5;
+            padding: 1rem;
+            border-radius: 1rem;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        .code-block {
+            background: #1e2a36;
+            color: #d4f0ff;
+            padding: 1rem;
+            border-radius: 1rem;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        /* Comparativo Cascata x Ágil */
+        .comparison {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .comp-card {
+            flex: 1;
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .comp-card h3 {
+            text-align: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Simulador interativo (mini ferramenta) */
+        .simulator {
+            background: linear-gradient(145deg, #ffffff, #f8fafd);
+            border-radius: 2rem;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 1px solid #dce9f2;
+        }
+
+        .priority-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        .priority-item {
+            background: white;
+            border-radius: 1rem;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .priority-controls button {
+            background: #eef2f8;
+            border: none;
+            padding: 0.3rem 0.8rem;
+            border-radius: 30px;
+            margin: 0 0.2rem;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .priority-value {
+            font-weight: 800;
+            background: #0b2b44;
+            color: white;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: #5a6f88;
+            border-top: 1px solid #dce5f0;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 750px) {
+            .hero h1 { font-size: 1.8rem; }
+            .tab-btn { padding: 0.5rem 1rem; font-size: 0.85rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <h1>📋 Análise de Requisitos <span>TEMA 04</span></h1>
+    <p>Compreenda, documente e gerencie requisitos com modelos Cascata, Ágeis, técnicas de elicitação e rastreabilidade — tudo com exemplos práticos.</p>
+    <div class="badge-container">
+        <div class="badge">🎯 Coleta de requisitos</div>
+        <div class="badge">💧 Modelo Cascata</div>
+        <div class="badge">🔄 Modelos Ágeis</div>
+        <div class="badge">📌 Rastreabilidade</div>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Sistema de Abas -->
+    <div class="tabs">
+        <button class="tab-btn active" data-tab="intro">📖 Introdução & Tipos</button>
+        <button class="tab-btn" data-tab="tecnicas">🧠 Elicitação & Modelagem</button>
+        <button class="tab-btn" data-tab="modelos">💧 Cascata x Ágil</button>
+        <button class="tab-btn" data-tab="rastreabilidade">🔗 Rastreabilidade & Gestão</button>
+        <button class="tab-btn" data-tab="simulador">⚙️ Simulador (Priorização)</button>
+    </div>
+
+    <!-- PAINEL 1: INTRODUÇÃO E TIPOS DE REQUISITOS -->
+    <div id="intro" class="tab-pane active-pane">
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-icon">🎯</div>
+                <h3>O que é Análise de Requisitos?</h3>
+                <p>Etapa fundamental para entender, documentar e validar necessidades de usuários e stakeholders. Define o que o sistema deve fazer e como se comportar.</p>
+                <div class="example-box">
+                    <strong>📌 Exemplo prático:</strong> Em um e-commerce, a análise de requisitos identifica a necessidade de "carrinho de compras", "login seguro" e "tempo de resposta <2s".
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-icon">⚙️</div>
+                <h3>Requisitos Funcionais</h3>
+                <p>Funcionalidades específicas: ações que o sistema deve executar.</p>
+                <div class="example-box">
+                    <strong>✅ Exemplo:</strong> “O sistema deve permitir que o usuário recupere a senha por e-mail.”
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-icon">🛡️</div>
+                <h3>Requisitos Não Funcionais</h3>
+                <p>Atributos de qualidade: desempenho, segurança, usabilidade, disponibilidade.</p>
+                <div class="example-box">
+                    <strong>✅ Exemplo:</strong> “O sistema deve suportar 500 usuários simultâneos com tempo de resposta < 1.5s.”
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-icon">🧑‍💼</div>
+                <h3>Requisitos de Usuário x Sistema</h3>
+                <p>Usuário: necessidades dos usuários finais. Sistema: especificações técnicas.</p>
+                <div class="example-box">
+                    <strong>Exemplo Usuário:</strong> “Visualizar histórico de pedidos.”<br>
+                    <strong>Exemplo Sistema:</strong> “Banco de dados PostgreSQL com índice em user_id.”
+                </div>
+            </div>
+        </div>
+        <div class="simulator" style="background: #eef3fa;">
+            <h3>📊 Tipos de Requisitos em ação</h3>
+            <p><strong>Cenário:</strong> Aplicativo de entregas. Identifique qual tipo de requisito se encaixa:</p>
+            <ul style="margin-left: 1.5rem; margin-top: 0.8rem;">
+                <li>🔹 "O app deve enviar notificação push ao entregador" → <strong>Funcional</strong></li>
+                <li>🔹 "O aplicativo deve usar criptografia de ponta a ponta" → <strong>Não Funcional (Segurança)</strong></li>
+                <li>🔹 "O sistema deve estar disponível 99,9% do tempo" → <strong>Não Funcional (Disponibilidade)</strong></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- PAINEL 2: ELICITAÇÃO E TÉCNICAS DE MODELAGEM -->
+    <div id="tecnicas" class="tab-pane">
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-icon">🗣️</div>
+                <h3>Técnicas de Elicitação</h3>
+                <ul style="margin-left: 1.2rem;">
+                    <li>Entrevistas com stakeholders</li>
+                    <li>Questionários e pesquisas</li>
+                    <li>Workshops e brainstorming</li>
+                    <li>Observação direta e etnografia</li>
+                    <li>Prototipação interativa</li>
+                </ul>
+            </div>
+            <div class="card">
+                <div class="card-icon">📐</div>
+                <h3>Modelagem Visual (UML)</h3>
+                <p>Diagramas de Caso de Uso, sequência, atividades – ajudam a visualizar interações.</p>
+                <div class="example-box">
+                    <strong>📘 Exemplo - Caso de Uso:</strong> Ator "Cliente" → caso "Realizar Pedido" e "Acompanhar Entrega".
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-icon">📄</div>
+                <h3>Documentação de Requisitos</h3>
+                <p>Especificação textual, matriz de rastreabilidade, protótipos de baixa fidelidade.</p>
+                <div class="example-box">
+                    <strong>Ferramentas:</strong> Jira, Confluence, IBM DOORS, Lucidchart.
+                </div>
+            </div>
+        </div>
+        <div class="code-block">
+            📌 Exemplo de artefato: Histórias de Usuário (Ágil)<br>
+            "Como <strong>usuário comum</strong>, eu quero <strong>filtrar produtos por preço</strong> para <strong>encontrar ofertas rapidamente</strong>."<br>
+            Critérios de aceitação: slider de preço, atualização em tempo real.
+        </div>
+    </div>
+
+    <!-- PAINEL 3: MODELO CASCATA x ÁGEIS -->
+    <div id="modelos" class="tab-pane">
+        <div class="comparison">
+            <div class="comp-card">
+                <h3>💧 Modelo Cascata</h3>
+                <p><strong>Fases sequenciais:</strong> Requisitos → Design → Implementação → Testes → Manutenção. Cada fase termina antes da próxima.</p>
+                <div class="example-box">
+                    ✅ Ideal para projetos com requisitos estáveis e bem definidos (ex: sistemas governamentais, controle de tráfego aéreo).
+                </div>
+                <div class="example-box">
+                    📌 Exemplo prático: Software para folha de pagamento – regras fiscais fixas, pouca mudança.
+                </div>
+            </div>
+            <div class="comp-card">
+                <h3>🔄 Modelos Ágeis (Scrum/Kanban)</h3>
+                <p>Iterativo, incremental, com entregas contínuas e adaptação aos feedbacks dos stakeholders.</p>
+                <div class="example-box">
+                    ✅ Ideal para projetos com requisitos dinâmicos (ex: aplicativos de marketplace, startups).
+                </div>
+                <div class="example-box">
+                    📌 Exemplo: Time Scrum trabalha em Sprints de 2 semanas, refinando backlog com Product Owner.
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <h3>📌 Quando aplicar cada um?</h3>
+            <p><strong>Cascata:</strong> Requisitos claros, pouca mudança esperada, contratos rígidos.<br>
+            <strong>Ágil:</strong> Necessidade de entregas rápidas, incertezas, envolvimento constante do cliente.</p>
+        </div>
+    </div>
+
+    <!-- PAINEL 4: RASTREABILIDADE, GESTÃO DE MUDANÇAS E VALIDAÇÃO -->
+    <div id="rastreabilidade" class="tab-pane">
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-icon">🔍</div>
+                <h3>Rastreabilidade de Requisitos</h3>
+                <p>Conexão entre requisitos, casos de uso, testes e implementação. Permite verificar se tudo foi atendido.</p>
+                <div class="example-box">
+                    <strong>Matriz de Rastreabilidade:</strong> Requisito R001 → Caso de teste CT-12 → Módulo de autenticação.
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-icon">🔄</div>
+                <h3>Gerenciamento de Mudanças</h3>
+                <p>Processo controlado para avaliar impacto, aprovar e implementar alterações nos requisitos.</p>
+                <div class="example-box">
+                    ✅ Fluxo: Solicitação → Análise de impacto → Aprovação (CCB) → Atualização da documentação.
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-icon">✔️</div>
+                <h3>Validação x Verificação</h3>
+                <p><strong>Validação:</strong> "construímos o produto certo?" (stakeholders aprovam).<br>
+                <strong>Verificação:</strong> "construímos corretamente?" (técnica).</p>
+            </div>
+        </div>
+        <div class="simulator">
+            <h3>📌 Exemplo de Rastreabilidade (Cenário)</h3>
+            <p><strong>Projeto: Sistema de Reservas de Hotel</strong></p>
+            <ul>
+                <li>RF-01: Reservar quarto → Implementado no módulo Reserva → Teste TR-08 validado.</li>
+                <li>RNF-04: Sistema deve responder em até 1s → Teste de carga aprovado.</li>
+            </ul>
+            <div class="code-block">
+                // Exemplo de rastreabilidade em ferramenta (simulação JSON)
+                {
+                  "requisito_id": "RF-01",
+                  "teste_associado": "CT-23",
+                  "status": "implementado",
+                  "versão": "2.0"
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- PAINEL 5: SIMULADOR INTERATIVO - PRIORIZAÇÃO DE REQUISITOS (exemplo prático) -->
+    <div id="simulador" class="tab-pane">
+        <div class="simulator">
+            <h3>⚙️ Simulador Interativo: Priorização de Requisitos (MoSCoW)</h3>
+            <p>Defina a prioridade (Must, Should, Could, Won't) para cada requisito. Entenda como a gestão de requisitos funciona na prática.</p>
+            <div id="priorityList" class="priority-list">
+                <!-- itens gerados dinamicamente via JS -->
+            </div>
+            <div style="margin-top: 1.5rem; background: #e2edf7; border-radius: 1rem; padding: 1rem;">
+                <h4>📊 Resultado da Priorização</h4>
+                <p id="priorityFeedback">Clique nos botões (+ / -) para alterar prioridades e ver a análise.</p>
+            </div>
+        </div>
+        <div class="card">
+            <h3>🎯 Por que priorizar requisitos?</h3>
+            <p>Evita escopo descontrolado, foca no MVP (Produto Mínimo Viável) e otimiza recursos. Métodos como MoSCoW, Story Mapping e Análise de Valor são essenciais.</p>
+        </div>
+    </div>
+</div>
+
+<footer>
+    📚 Baseado no conteúdo: Análise de Requisitos - Coleta, Modelos Cascata/Ágeis, Elicitação, Rastreabilidade e Gestão de Mudanças.<br>
+    🌟 Exemplos práticos e simulador demonstrando a aplicação de conceitos do TEMA 04.
+</footer>
+
+<script>
+    // Simulador de priorização (MoSCoW interativo)
+    const requisitosDemo = [
+        { id: 1, nome: "Login com autenticação (e-mail/senha)", prioridade: 2 }, // 0:Won't, 1:Could, 2:Should, 3:Must
+        { id: 2, nome: "Exportar relatórios em PDF", prioridade: 1 },
+        { id: 3, nome: "Suporte a 1000 usuários simultâneos (desempenho)", prioridade: 3 },
+        { id: 4, nome: "Tema escuro (customização visual)", prioridade: 0 },
+        { id: 5, nome: "Notificações por e-mail de eventos importantes", prioridade: 2 }
+    ];
+
+    const prioridadeLabels = ["Won't (Não fará agora)", "Could (Poderia ter)", "Should (Deveria ter)", "Must (Obrigatório)"];
+
+    function renderSimulator() {
+        const container = document.getElementById('priorityList');
+        if (!container) return;
+
+        container.innerHTML = '';
+        requisitosDemo.forEach(req => {
+            const div = document.createElement('div');
+            div.className = 'priority-item';
+            div.innerHTML = `
+                <div style="flex:2; font-weight:500;">📌 ${escapeHtml(req.nome)}</div>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <div class="priority-value">${prioridadeLabels[req.prioridade]}</div>
+                    <div class="priority-controls">
+                        <button data-id="${req.id}" data-delta="-1" class="prio-btn">- Baixar</button>
+                        <button data-id="${req.id}" data-delta="1" class="prio-btn">+ Aumentar</button>
+                    </div>
+                </div>
+            `;
+            container.appendChild(div);
+        });
+
+        // Adiciona eventos nos botões
+        document.querySelectorAll('.prio-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = parseInt(btn.getAttribute('data-id'));
+                const delta = parseInt(btn.getAttribute('data-delta'));
+                const req = requisitosDemo.find(r => r.id === id);
+                if (req) {
+                    let novaPrioridade = req.prioridade + delta;
+                    if (novaPrioridade < 0) novaPrioridade = 0;
+                    if (novaPrioridade > 3) novaPrioridade = 3;
+                    req.prioridade = novaPrioridade;
+                    renderSimulator();
+                    updateFeedback();
+                }
+                e.stopPropagation();
+            });
+        });
+        updateFeedback();
+    }
+
+    function updateFeedback() {
+        const mustCount = requisitosDemo.filter(r => r.prioridade === 3).length;
+        const shouldCount = requisitosDemo.filter(r => r.prioridade === 2).length;
+        const couldCount = requisitosDemo.filter(r => r.prioridade === 1).length;
+        const wontCount = requisitosDemo.filter(r => r.prioridade === 0).length;
+        const feedbackDiv = document.getElementById('priorityFeedback');
+        if (feedbackDiv) {
+            feedbackDiv.innerHTML = `
+                <strong>Priorização atual (MoSCoW):</strong><br>
+                🔴 Must (essencial): ${mustCount} requisitos | 🟠 Should: ${shouldCount} | 🟡 Could: ${couldCount} | ⚪ Won't: ${wontCount}<br>
+                💡 Dica: Requisitos "Must" são críticos para o lançamento. No desenvolvimento ágil, o time foca primeiro neles.
+            `;
+        }
+    }
+
+    // Sistema de abas (todas as páginas)
+    function initTabs() {
+        const tabs = document.querySelectorAll('.tab-btn');
+        const panes = document.querySelectorAll('.tab-pane');
+
+        tabs.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabId = btn.getAttribute('data-tab');
+                // Remove active de todos
+                tabs.forEach(t => t.classList.remove('active'));
+                btn.classList.add('active');
+                panes.forEach(pane => pane.classList.remove('active-pane'));
+                const targetPane = document.getElementById(tabId);
+                if (targetPane) targetPane.classList.add('active-pane');
+            });
+        });
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    // Inicializa simulador e abas
+    renderSimulator();
+    initTabs();
+
+    // também garante que se houver navegação, o simulador continua funcional
+    const observer = new MutationObserver(() => {
+        if (document.getElementById('priorityList') && document.getElementById('priorityList').children.length === 0) {
+            renderSimulator();
+        }
+    });
+    observer.observe(document.getElementById('simulador'), { childList: true, subtree: true });
+</script>
+
+<!-- Explicação do código Python relacionado ao TEMA 04 (didático) -->
+<div style="display: none;">
+<!-- 
+    =======================================================
+    PARTE DE CÓDIGO PYTHON (EXEMPLO COMPLEMENTAR)
+    =======================================================
+    Abaixo um exemplo de script Python que simula um sistema simples de 
+    validação e rastreabilidade de requisitos, comentado linha a linha.
+    Esse código representa como uma ferramenta de backend poderia gerenciar 
+    os conceitos apresentados no front-end.
+-->
+
+<!-- 
+    ```python
+    # modulo_analise_requisitos.py
+    # Este script demonstra na prática os conceitos:
+    # - Tipos de requisitos (funcionais / não funcionais)
+    # - Rastreabilidade (matriz simples)
+    # - Validação de requisitos com stakeholders simulado
+    
+    class Requisito:
+        def __init__(self, id, descricao, tipo, prioridade, testes_associados):
+            self.id = id                # ex: "RF-01"
+            self.descricao = descricao
+            self.tipo = tipo            # "funcional" ou "nao_funcional"
+            self.prioridade = prioridade # "Must", "Should", "Could", "Wont"
+            self.testes = testes_associados  # lista de IDs de testes
+            self.status_implementacao = False
+    
+    class MatrizRastreabilidade:
+        def __init__(self):
+            self.requisitos = []
+        
+        def adicionar_requisito(self, req):
+            self.requisitos.append(req)
+        
+        def rastrear_por_teste(self, id_teste):
+            """Retorna quais requisitos cobrem determinado teste."""
+            return [r for r in self.requisitos if id_teste in r.testes]
+        
+        def relatorio_implementacao(self):
+            print("=== Relatório de Rastreabilidade ===")
+            for r in self.requisitos:
+                status = "✅ Implementado" if r.status_implementacao else "⏳ Pendente"
+                print(f"{r.id} - {r.descricao[:40]}... → {status} | Testes: {r.testes}")
+    
+    # EXEMPLO PRÁTICO DE USO
+    if __name__ == "__main__":
+        matriz = MatrizRastreabilidade()
+        
+        # Criando requisitos baseados no TEMA 04
+        req1 = Requisito("RF-01", "Sistema deve permitir login com e-mail", "funcional", "Must", ["CT-01", "CT-02"])
+        req2 = Requisito("RNF-03", "Tempo de resposta < 2 segundos", "nao_funcional", "Should", ["CT-10"])
+        req3 = Requisito("RF-04", "Gerar relatório de vendas em PDF", "funcional", "Could", ["CT-15"])
+        
+        matriz.adicionar_requisito(req1)
+        matriz.adicionar_requisito(req2)
+        matriz.adicionar_requisito(req3)
+        
+        # Simulando implementação
+        req1.status_implementacao = True
+        req2.status_implementacao = True
+        
+        # Rastreabilidade
+        print("Testes relacionados a CT-01:", [r.id for r in matriz.rastrear_por_teste("CT-01")])
+        matriz.relatorio_implementacao()
+        
+        # Validação (simulando feedback do stakeholder)
+        print("\n[Validação] Stakeholder aprovou os requisitos RF-01 e RNF-03, mas pediu refinamento do RF-04.")

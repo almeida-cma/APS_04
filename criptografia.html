@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Demonstração Simples de Criptografia</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 24px;
+      background: #f5f7fb;
+      color: #222;
+    }
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+      margin-bottom: 20px;
+    }
+    h1, h2 {
+      margin-top: 0;
+    }
+    textarea, input {
+      width: 100%; 
+      padding: 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+    button {
+      margin-top: 12px;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      background: #2563eb;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #1d4ed8;
+    }
+    .output {
+      margin-top: 12px;
+      padding: 16px;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      word-break: break-word;
+      font-family: Consolas, monospace;
+    }
+    .step {
+      margin-top: 12px;
+      padding: 12px;
+      background: #eef6ff;
+      border-left: 4px solid #2563eb;
+      border-radius: 8px;
+    }
+    .small {
+      color: #666;
+      font-size: 14px;
+    }
+    code {
+      background: #eef2ff;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Demonstração Simples de Criptografia</h1>
+    <p>
+      Este exemplo mostra como uma mensagem pode ser transformada em um texto
+      aparentemente sem sentido e depois recuperada usando uma chave secreta.
+    </p>
+    <p class="small">
+      Observação: este é um exemplo didático usando codificação Base64, e não um sistema de segurança real.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>1. Digite uma mensagem</h2>
+    <textarea id="message" placeholder="Ex.: Senha: 123456">Olá, mundo secreto!</textarea>
+
+    <h2>2. Informe uma chave secreta</h2>
+    <input id="key" type="text" value="minha-chave" />
+
+    <button onclick="encryptMessage()">Criptografar</button>
+
+    <div class="step">
+      <strong>Mensagem Original:</strong>
+      <div class="output" id="originalOutput">Olá, mundo secreto!</div>
+    </div>
+
+    <div class="step">
+      <strong>Mensagem Criptografada:</strong>
+      <div class="output" id="encryptedOutput">(ainda não gerada)</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>3. Descriptografar</h2>
+    <button onclick="decryptMessage()">Descriptografar</button>
+
+    <div class="step">
+      <strong>Mensagem Recuperada:</strong>
+      <div class="output" id="decryptedOutput">(ainda não recuperada)</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Como funciona?</h2>
+    <ol>
+      <li>Concatenamos a chave com a mensagem.</li>
+      <li>Convertimos o resultado para Base64.</li>
+      <li>O texto resultante parece incompreensível.</li>
+      <li>Na descriptografia, removemos a chave e recuperamos a mensagem.</li>
+    </ol>
+
+    <p><strong>Exemplo:</strong></p>
+    <p>
+      Mensagem: <code>Olá</code><br />
+      Chave: <code>abc</code><br />
+      Texto combinado: <code>abc::Olá</code><br />
+      Base64: <code>YWJjOjpPbMOh</code>
+    </p>
+  </div>
+
+  <script>
+    let encryptedText = '';
+
+    function encryptMessage() {
+      const message = document.getElementById('message').value;
+      const key = document.getElementById('key').value;
+
+      document.getElementById('originalOutput').textContent = message;
+
+      const combined = `${key}::${message}`;
+      encryptedText = btoa(unescape(encodeURIComponent(combined)));
+
+      document.getElementById('encryptedOutput').textContent = encryptedText;
+      document.getElementById('decryptedOutput').textContent = '(ainda não recuperada)';
+    }
+
+    function decryptMessage() {
+      if (!encryptedText) {
+        alert('Primeiro criptografe uma mensagem.');
+        return;
+      }
+
+      const key = document.getElementById('key').value;
+
+      try {
+        const decoded = decodeURIComponent(escape(atob(encryptedText)));
+        const prefix = `${key}::`;
+
+        if (!decoded.startsWith(prefix)) {
+          document.getElementById('decryptedOutput').textContent =
+            'Chave incorreta. Não foi possível recuperar a mensagem.';
+          return;
+        }
+
+        const original = decoded.substring(prefix.length);
+        document.getElementById('decryptedOutput').textContent = original;
+      } catch (error) {
+        document.getElementById('decryptedOutput').textContent =
+          'Erro ao descriptografar.';
+      }
+    }
+
+    // Gera uma criptografia inicial para demonstração.
+    encryptMessage();
+  </script>
+</body>
+</html>

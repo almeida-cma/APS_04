@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>APS_04 - Análise de Requisitos & Ferramentas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f4f7fc 0%, #e9eef3 100%);
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            padding: 2rem 1.5rem;
+            color: #1a2c3e;
+            line-height: 1.5;
+        }
+
+        /* container principal */
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.92);
+            border-radius: 2.5rem;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            backdrop-filter: blur(0px);
+            transition: all 0.2s;
+        }
+
+        /* cabeçalho */
+        .header {
+            background: #0b2b3b;
+            padding: 2rem 2rem 1.5rem 2rem;
+            border-bottom: 6px solid #f5b042;
+        }
+
+        .header h1 {
+            font-size: 2.4rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .header h1 span {
+            background: #f5b042;
+            font-size: 1.3rem;
+            padding: 0.2rem 0.9rem;
+            border-radius: 60px;
+            color: #1e2f3a;
+            font-weight: 600;
+        }
+
+        .sub {
+            color: #cbdbe6;
+            margin-top: 0.6rem;
+            font-size: 1.05rem;
+            font-weight: 400;
+        }
+
+        /* grade de cards */
+        .grid-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.8rem;
+            padding: 2rem 2rem 1.8rem 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 1.8rem;
+            overflow: hidden;
+            transition: all 0.25s ease;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 30px -12px rgba(0, 0, 0, 0.2);
+            border-color: #f5b04270;
+        }
+
+        .card-header {
+            background: #f8fafd;
+            padding: 1rem 1.5rem;
+            border-bottom: 2px solid #eef2f7;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-header .emoji-badge {
+            font-size: 2rem;
+        }
+
+        .card-header h2 {
+            font-size: 1.45rem;
+            font-weight: 600;
+            color: #0b2b3b;
+        }
+
+        .card-content {
+            padding: 1.5rem;
+            flex: 1;
+        }
+
+        .desc {
+            color: #2c4b60;
+            margin-bottom: 1.6rem;
+            font-size: 0.95rem;
+            line-height: 1.45;
+        }
+
+        .btn-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #0b2b3b;
+            color: white;
+            padding: 0.7rem 1.2rem;
+            border-radius: 60px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: 0.2s;
+            border: none;
+            cursor: pointer;
+            margin-top: 0.5rem;
+        }
+
+        .btn-link:hover {
+            background: #f5b042;
+            color: #1a2c3e;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .badge-info {
+            background: #eef2fa;
+            color: #1e5f7a;
+            font-size: 0.75rem;
+            border-radius: 30px;
+            padding: 0.2rem 0.8rem;
+            display: inline-block;
+            margin-top: 12px;
+        }
+
+        .test-double {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+
+        hr {
+            margin: 0.8rem 0;
+            border-color: #e2e8f0;
+        }
+
+        /* rodapé em destaque */
+        .footer-highlight {
+            background: #ffeed9;
+            border-top: 5px solid #f5b042;
+            padding: 1.6rem 2rem;
+            text-align: center;
+            margin-top: 0.5rem;
+            box-shadow: inset 0 8px 12px -10px rgba(0, 0, 0, 0.05);
+        }
+
+        .footer-highlight p {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #b45f06;
+            background: #fff3e0;
+            display: inline-block;
+            padding: 0.7rem 1.8rem;
+            border-radius: 60px;
+            letter-spacing: -0.2px;
+            backdrop-filter: blur(2px);
+        }
+
+        .footer-highlight a {
+            color: #c4450c;
+            font-weight: 800;
+            text-decoration: underline;
+            transition: 0.2s;
+        }
+
+        .footer-highlight a:hover {
+            color: #9b2e00;
+            background: none;
+        }
+
+        .small-note {
+            background: #eef2f5;
+            text-align: center;
+            padding: 0.9rem;
+            font-size: 0.8rem;
+            color: #4a6272;
+            border-top: 1px solid #dce5ec;
+        }
+
+        @media (max-width: 720px) {
+            body {
+                padding: 1rem;
+            }
+            .grid-cards {
+                padding: 1.5rem;
+                gap: 1.2rem;
+            }
+            .header h1 {
+                font-size: 1.7rem;
+            }
+            .footer-highlight p {
+                font-size: 1rem;
+                padding: 0.5rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>
+            📋 APS_04 · Análise de Requisitos 
+            <span>🔗 repositório</span>
+        </h1>
+        <div class="sub">Ferramentas essenciais · Histórias de usuário · Criptografia · Glossário Digital & Testes</div>
+    </div>
+
+    <div class="grid-cards">
+        
+        <!-- 1) Tema 4 - Análise de Requisitos -->
+        <div class="card">
+            <div class="card-header">
+                <div class="emoji-badge">📌</div>
+                <h2>Tema 4 · Análise de Requisitos</h2>
+            </div>
+            <div class="card-content">
+                <div class="desc">
+                    Documento completo sobre levantamento de requisitos funcionais e não funcionais, técnicas de elicitação e modelagem.
+                </div>
+                <a href="tema4.html" class="btn-link" target="_blank" rel="noopener noreferrer">
+                    📄 Abrir Tema 4 → 
+                </a>
+                <div class="badge-info">nova aba</div>
+            </div>
+        </div>
+
+        <!-- 2) Exemplo de Criptografia -->
+        <div class="card">
+            <div class="card-header">
+                <div class="emoji-badge">🔐</div>
+                <h2>Exemplo de Criptografia</h2>
+            </div>
+            <div class="card-content">
+                <div class="desc">
+                    Demonstração prática de cifra simétrica e hash, ilustrando como proteger dados em sistemas reais.
+                </div>
+                <a href="criptografia.html" class="btn-link" target="_blank" rel="noopener noreferrer">
+                    🔒 Abrir Criptografia →
+                </a>
+                <div class="badge-info">nova aba</div>
+            </div>
+        </div>
+
+        <!-- 3) História de Usuário (1) -->
+        <div class="card">
+            <div class="card-header">
+                <div class="emoji-badge">📖</div>
+                <h2>História de Usuário #1</h2>
+            </div>
+            <div class="card-content">
+                <div class="desc">
+                    "Como cliente, quero visualizar meu saldo rapidamente para controlar finanças". Exemplo com critérios de aceitação.
+                </div>
+                <a href="hist_user.html" class="btn-link" target="_blank" rel="noopener noreferrer">
+                    👤 Abrir História 1 →
+                </a>
+                <div class="badge-info">nova aba</div>
+            </div>
+        </div>
+
+        <!-- 4) Outro exemplo História de Usuário -->
+        <div class="card">
+            <div class="card-header">
+                <div class="emoji-badge">✍️</div>
+                <h2>História de Usuário #2</h2>
+            </div>
+            <div class="card-content">
+                <div class="desc">
+                    "Como administrador, desejo exportar relatórios em PDF para auditoria". Cenário com fluxo completo.
+                </div>
+                <a href="hist_user_2.html" class="btn-link" target="_blank" rel="noopener noreferrer">
+                    📊 Abrir História 2 →
+                </a>
+                <div class="badge-info">nova aba</div>
+            </div>
+        </div>
+
+        <!-- 5) Testando aprendizado (testes.html) -->
+        <div class="card">
+            <div class="card-header">
+                <div class="emoji-badge">🧪</div>
+                <h2>Testando aprendizado</h2>
+            </div>
+            <div class="card-content">
+                <div class="desc">
+                    Simulado interativo com questões sobre análise de requisitos, validação e boas práticas. Print do resultado será salvo no repositório.
+                </div>
+                <a href="testes.html" class="btn-link" target="_blank" rel="noopener noreferrer">
+                    ✅ Abrir Testes (Item 5) →
+                </a>
+                <div class="badge-info">nova aba · guardar print 📸</div>
+            </div>
+        </div>
+
+        <!-- 6) Atividade para construção de "Glossário Digital" -->
+        <div class="card">
+            <div class="card-header">
+                <div class="emoji-badge">📚</div>
+                <h2>Glossário Digital</h2>
+            </div>
+            <div class="card-content">
+                <div class="desc">
+                    Aplicação colaborativa com definições de termos técnicos (Requisitos, Stakeholder, Validação, etc.) — item obrigatório do repositório.
+                </div>
+                <a href="glossario.html" class="btn-link" target="_blank" rel="noopener noreferrer">
+                    🌐 Construir / Visualizar Glossário →
+                </a>
+                <div class="badge-info">nova aba · link público será no README</div>
+            </div>
+        </div>
+
+        <!-- 7) Teste com análise de requisitos dos aplicativos projetados: quiz_apps_all.html -->
+        <div class="card">
+            <div class="card-header">
+                <div class="emoji-badge">🎯</div>
+                <h2>Quiz Apps · análise</h2>
+            </div>
+            <div class="card-content">
+                <div class="desc">
+                    Teste abrangente analisando requisitos de aplicativos projetados: pontuação, feedback e geração de relatório. Item 7 (Print necessário).
+                </div>
+                <a href="quiz_apps_all.html" class="btn-link" target="_blank" rel="noopener noreferrer">
+                    🧠 Iniciar Quiz Apps →
+                </a>
+                <div class="badge-info">nova aba · guardar print + enviar form</div>
+            </div>
+        </div>
+
+        <!-- Cards extras? não obrigatórios, mas organizamos os 7 principais -->
+    </div>
+
+    <!-- Instrução extra: detalhes sobre prints e readme (conforme pedido) -->
+    <div style="background: #eef3fc; margin: 0 2rem 1rem 2rem; border-radius: 1.8rem; padding: 0.8rem 1.5rem;">
+        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: space-between;">
+            <div style="display: flex; gap: 12px;">
+                <span style="background:#cbdbe6; padding:4px 12px; border-radius:30px; font-size:0.75rem;">📸 Print Item 5 (testes.html)</span>
+                <span style="background:#cbdbe6; padding:4px 12px; border-radius:30px; font-size:0.75rem;">📸 Print Item 7 (quiz_apps_all.html)</span>
+                <span style="background:#cbdbe6; padding:4px 12px; border-radius:30px; font-size:0.75rem;">🔗 Link público glossario.html no README</span>
+            </div>
+            <div>
+                <a href="https://forms.gle/T9QSe3PyEpru3t538" target="_blank" rel="noopener noreferrer" style="background:#0b2b3b; color:white; text-decoration:none; padding:8px 18px; border-radius:40px; font-weight:600; font-size:0.85rem; display:inline-flex; align-items:center; gap:6px;">📬 Enviar pelo formulário →</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- RODAPÉ EM DESTAQUE com informação obrigatória -->
+    <div class="footer-highlight">
+        <p>
+            ⚠️ Atenção, não esqueça de organizar seu trabalho (com equipe ou individualmente) para a <strong>Feira de Amostras de Aplicações em 24/06</strong>, preenchendo o formulário: 
+            <a href="https://almeida-cma.github.io/feira/" target="_blank" rel="noopener noreferrer">
+                https://almeida-cma.github.io/feira/
+            </a>
+        </p>
+    </div>
+
+    <div class="small-note">
+        🧩 APS_04 — Todos os links abrem em nova aba (target="_blank"). Repositório deve conter os 2 prints (testes.html e quiz_apps_all.html) + link público do glossário digital no README.
+    </div>
+</div>
+
+<!-- Mensagem opcional de boas práticas (sem bloquear navegação) -->
+</body>
+</html>

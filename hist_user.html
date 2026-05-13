@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>História de Usuário - Filtro por Preço</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      margin: 0;
+      padding: 32px;
+      background: #f5f7fb;
+      color: #1f2937;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+      margin-bottom: 24px;
+    }
+    h1, h2 {
+      margin-top: 0;
+    }
+    .story {
+      background: #eef6ff;
+      border-left: 4px solid #2563eb;
+      padding: 16px;
+      border-radius: 8px;
+      font-size: 1.1rem;
+    }
+    .criteria ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 16px;
+    }
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+    input[type="range"] {
+      width: 100%;n    }
+    .range-value {
+      margin-top: 6px;
+      color: #374151;
+      font-size: 0.95rem;
+    }
+    .summary {
+      margin-top: 12px;
+      padding: 12px;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+    .product {
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 16px;
+      background: #fff;
+      transition: transform 0.2s ease;
+    }
+    .product:hover {
+      transform: translateY(-2px);
+    }
+    .product h3 {
+      margin: 0 0 8px 0;
+      font-size: 1rem;
+    }
+    .price {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #059669;
+    }
+    .empty {
+      padding: 20px;
+      text-align: center;
+      color: #6b7280;
+      border: 2px dashed #d1d5db;
+      border-radius: 12px;
+      background: #fafafa;
+    }
+    .footer {
+      font-size: 0.9rem;
+      color: #6b7280;
+      text-align: center;
+      margin-top: 12px;
+    }
+    @media (max-width: 640px) {
+      body { padding: 16px; }
+      .controls { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1>História de Usuário (Ágil)</h1>
+      <div class="story">
+        <strong>Como usuário comum, eu quero filtrar produtos por preço para encontrar ofertas rapidamente.</strong>
+      </div>
+    </div>
+
+    <div class="card criteria">
+      <h2>Critérios de Aceitação</h2>
+      <ul>
+        <li>Slider para preço mínimo e máximo.</li>
+        <li>Atualização em tempo real.</li>
+        <li>Exibir apenas produtos dentro da faixa selecionada.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>Filtro por Preço</h2>
+
+      <div class="controls">
+        <div>
+          <label for="minPrice">Preço mínimo</label>
+          <input type="range" id="minPrice" min="0" max="1000" step="10" value="0">
+          <div class="range-value" id="minValue">R$ 0</div>
+        </div>
+
+        <div>
+          <label for="maxPrice">Preço máximo</label>
+          <input type="range" id="maxPrice" min="0" max="1000" step="10" value="1000">
+          <div class="range-value" id="maxValue">R$ 1.000</div>
+        </div>
+      </div>
+
+      <div class="summary" id="summary">
+        Exibindo produtos entre R$ 0 e R$ 1.000
+      </div>
+
+      <div class="products" id="productList"></div>
+      <div class="footer">Os produtos são atualizados automaticamente ao mover os sliders.</div>
+    </div>
+  </div>
+
+  <script>
+    const products = [
+      { name: 'Mouse Gamer', price: 80 },
+      { name: 'Teclado Mecânico', price: 150 },
+      { name: 'Headset', price: 250 },
+      { name: 'Webcam HD', price: 320 },
+      { name: 'Monitor 24"', price: 900 },
+      { name: 'Notebook', price: 1000 }
+    ];
+
+    const minPriceInput = document.getElementById('minPrice');
+    const maxPriceInput = document.getElementById('maxPrice');
+    const minValue = document.getElementById('minValue');
+    const maxValue = document.getElementById('maxValue');
+    const summary = document.getElementById('summary');
+    const productList = document.getElementById('productList');
+
+    function formatBRL(value) {
+      return value.toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+        maximumFractionDigits: 0
+      });
+    }
+
+    function renderProducts() {
+      let min = Number(minPriceInput.value);
+      let max = Number(maxPriceInput.value);
+
+      // Garante que min nunca seja maior que max.
+      if (min > max) {
+        [min, max] = [max, min];
+      }
+
+      minValue.textContent = formatBRL(min);
+      maxValue.textContent = formatBRL(max);
+      summary.textContent = `Exibindo produtos entre ${formatBRL(min)} e ${formatBRL(max)}`;
+
+      const filtered = products.filter(product =>
+        product.price >= min && product.price <= max
+      );
+
+      if (filtered.length === 0) {
+        productList.innerHTML = '<div class="empty">Nenhum produto encontrado nesta faixa de preço.</div>';
+        return;
+      }
+
+      productList.innerHTML = filtered.map(product => `
+        <div class="product">
+          <h3>${product.name}</h3>
+          <div class="price">${formatBRL(product.price)}</div>
+        </div>
+      `).join('');
+    }
+
+    minPriceInput.addEventListener('input', renderProducts);
+    maxPriceInput.addEventListener('input', renderProducts);
+
+    // Renderização inicial
+    renderProducts();
+  </script>
+</body>
+</html>

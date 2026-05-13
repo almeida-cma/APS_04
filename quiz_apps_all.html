@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desafio do Analista de Sistemas - Edição Definitiva</title>
+    <style>
+        :root {
+            --primary: #4f46e5; /* Indigo */
+            --secondary: #4338ca;
+            --accent: #f59e0b; /* Amber/Gold */
+            --success: #10b981;
+            --danger: #ef4444;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --bg-color: #0f172a;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+
+        body {
+            background: var(--bg-color);
+            background-image: radial-gradient(circle at 50% 0%, #1e1b4b 0%, var(--bg-color) 70%);
+            color: var(--light);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Container Principal */
+        .quiz-container {
+            background: white;
+            color: var(--dark);
+            width: 100%;
+            max-width: 850px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.6);
+            position: relative;
+        }
+
+        /* Cabeçalho de Status */
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 20px 30px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title { font-size: 1.5rem; font-weight: bold; display: flex; align-items: center; gap: 10px; }
+        .score-board { background: rgba(0,0,0,0.3); padding: 8px 18px; border-radius: 25px; font-weight: bold; font-family: monospace; font-size: 1.3rem; color: var(--accent); box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); }
+        .question-counter { font-size: 1rem; color: #cbd5e1; margin-left: 15px; font-weight: normal; }
+
+        /* Barra de Progresso */
+        .progress-bar-container { width: 100%; height: 10px; background: #e2e8f0; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--accent), #fbbf24); width: 0%; transition: width 0.5s ease; }
+
+        /* Área da Pergunta */
+        .question-area { padding: 40px 40px; }
+        .question-badge { display: inline-block; background: #e0e7ff; color: var(--primary); padding: 6px 18px; border-radius: 20px; font-size: 0.9rem; font-weight: 800; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; border: 1px solid #c7d2fe; }
+        .question-text { font-size: 1.5rem; font-weight: 800; margin-bottom: 30px; color: var(--dark); line-height: 1.5; }
+
+        /* Opções de Resposta */
+        .options-grid { display: flex; flex-direction: column; gap: 12px; }
+        
+        .option-btn {
+            background: var(--light); border: 2px solid #cbd5e1; padding: 15px 20px;
+            border-radius: 12px; font-size: 1.1rem; text-align: left; cursor: pointer;
+            transition: all 0.2s; font-weight: 600; color: #334155;
+            display: flex; align-items: center; gap: 15px; line-height: 1.4;
+        }
+
+        .option-btn:hover:not(:disabled) { border-color: var(--primary); background: #f1f5f9; transform: translateX(8px); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .option-letter { background: #cbd5e1; color: white; min-width: 35px; height: 35px; display: flex; justify-content: center; align-items: center; border-radius: 50%; font-weight: bold; font-size: 1.1rem; }
+        .option-btn:hover:not(:disabled) .option-letter { background: var(--primary); }
+
+        /* Estados das Respostas */
+        .option-btn.correct { background: #ecfdf5; border-color: var(--success); color: #064e3b; }
+        .option-btn.correct .option-letter { background: var(--success); }
+        .option-btn.wrong { background: #fef2f2; border-color: var(--danger); color: #7f1d1d; }
+        .option-btn.wrong .option-letter { background: var(--danger); }
+        
+        /* Feedback Didático (A Explicação) */
+        .feedback-area {
+            margin-top: 30px; padding: 25px; border-radius: 12px; display: none;
+            animation: slideDown 0.5s ease; border-left: 6px solid;
+        }
+        .feedback-area.show { display: block; }
+        .feedback-title { font-weight: 900; font-size: 1.3rem; margin-bottom: 12px; text-transform: uppercase; }
+        .feedback-text { font-size: 1.1rem; line-height: 1.6; color: #334155; }
+        
+        .btn-next {
+            margin-top: 25px; background: var(--primary); color: white; border: none;
+            padding: 16px 30px; border-radius: 10px; font-size: 1.2rem; font-weight: bold;
+            cursor: pointer; width: 100%; transition: 0.3s; display: none; text-transform: uppercase; letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
+        }
+        .btn-next:hover { background: var(--secondary); transform: translateY(-2px); }
+
+        /* Tela de Recompensa (Final) */
+        .reward-screen { padding: 60px 40px; text-align: center; display: none; }
+        .reward-icon { font-size: 6rem; margin-bottom: 20px; text-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .reward-title { font-size: 2.8rem; color: var(--primary); margin-bottom: 15px; font-weight: 900; }
+        .reward-score { font-size: 1.6rem; color: #475569; margin-bottom: 40px; font-weight: 600; }
+        
+        .badges-container { display: flex; justify-content: center; gap: 20px; margin-bottom: 40px; flex-wrap: wrap; }
+        .badge-card { background: var(--light); border: 2px solid var(--accent); padding: 25px 20px; border-radius: 15px; width: 160px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); transition: transform 0.3s; }
+        .badge-card:hover { transform: translateY(-10px); }
+        .badge-icon { font-size: 3rem; margin-bottom: 15px; }
+        .badge-name { font-weight: 800; font-size: 1rem; color: var(--dark); text-transform: uppercase; }
+
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <div class="quiz-container">
+        <!-- Tela de Jogo -->
+        <div id="game-screen">
+            <div class="header">
+                <div class="header-title">🧠 Desafio de Requisitos <span class="question-counter" id="q-counter">1/12</span></div>
+                <div class="score-board">XP: <span id="score">0</span></div>
+            </div>
+            
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progress"></div>
+            </div>
+
+            <div class="question-area">
+                <span class="question-badge" id="app-context">Contexto do App</span>
+                <h2 class="question-text" id="question-text">Carregando pergunta...</h2>
+
+                <div class="options-grid" id="options-container">
+                    <!-- Botões gerados via JS -->
+                </div>
+
+                <div class="feedback-area" id="feedback-area">
+                    <div class="feedback-title" id="feedback-title">Feedback</div>
+                    <div class="feedback-text" id="feedback-text">Explicação...</div>
+                    <button class="btn-next" id="btn-next" onclick="nextQuestion()">Avançar ➔</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tela de Recompensa -->
+        <div class="reward-screen" id="reward-screen">
+            <div class="reward-icon" id="final-icon">🏆</div>
+            <h1 class="reward-title" id="final-title">Analista Master!</h1>
+            <div class="reward-score">Você conquistou <strong style="color: var(--accent);"><span id="final-score">0</span> XP</strong></div>
+            
+            <h3 style="margin-bottom: 25px; color: var(--dark); font-weight: 800;">Condecorações Desbloqueadas:</h3>
+            <div class="badges-container" id="badges-container">
+                <!-- Badges gerados via JS -->
+            </div>
+
+            <button class="btn-next" style="display: block;" onclick="location.reload()">🔄 Tentar Novamente</button>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // BASE DE DADOS DO QUIZ (Regras de Negócio e Requisitos)
+        // 12 Questões baseadas nos 7 Aplicativos
+        // ==========================================
+        const questions = [
+            {
+                context: "Etapa 1: Análise do Sistema",
+                question: "Quem é a pessoa responsável por DEFINIR que a média para aprovação é 7 e a frequência mínima é 75%?",
+                options: [
+                    "O Programador Python durante o código.",
+                    "O Banco de Dados de forma automática.",
+                    "O Designer de Interface visual.",
+                    "O Stakeholder (Ex: Coordenador, Cliente ou Regimento Escolar)."
+                ],
+                correct: 3,
+                explanation: "Exatamente! O programador apenas TRADUZ as regras para o computador. Quem dita as Regras de Negócio é sempre o dono do problema (Stakeholder)."
+            },
+            {
+                context: "App 1: Emissão de Diplomas",
+                question: "Para passar, a regra exige: Nota ≥ 7 E Frequência ≥ 75. O que acontece se a Nota for 8 e a Frequência 70?",
+                options: [
+                    "Aprova, pois a nota foi acima da média.",
+                    "Reprova, pois o operador 'E' (AND) exige que AMBAS as condições sejam verdadeiras.",
+                    "Aprova, pois o sistema ativa o operador 'OU' (OR) como backup.",
+                    "Trava e pede que o professor digite novamente."
+                ],
+                correct: 1,
+                explanation: "Exato! Na lógica de requisitos, a palavra 'E' (AND) é uma trava rígida. Ambas as regras precisam ser atendidas simultaneamente."
+            },
+            {
+                context: "App 2: Calculadora de Médias",
+                question: "Se a regra for apenas: 'Média ≥ 7 = Aprovado' e 'Média < 5 = Reprovado'. O que acontece com um aluno nota 6.0?",
+                options: [
+                    "O sistema arredonda para 7.",
+                    "O sistema aprova por aproximação.",
+                    "Ocorre um Bug Lógico (Falha de Requisito), pois o sistema não saberá o que fazer.",
+                    "O Python corrige sozinho e cria a Recuperação."
+                ],
+                correct: 2,
+                explanation: "Lacunas de requisitos geram falhas graves (Bugs). O sistema não sabe o que fazer com o número '6' se o analista não tiver mapeado a faixa de Recuperação!"
+            },
+            {
+                context: "Geral: O Fluxo do Sistema",
+                question: "No fluxo da maioria dos aplicativos, o que o sistema DEVE fazer imediatamente ANTES de aplicar uma regra matemática?",
+                options: [
+                    "Apresentar a tela de Vitória ou Sucesso.",
+                    "Exportar os dados para um arquivo JSON.",
+                    "Destruir todos os botões da tela por segurança.",
+                    "Validar se os campos não estão vazios e se são números válidos."
+                ],
+                correct: 3,
+                explanation: "Sempre! O Fluxo Lógico dita que não podemos calcular a média de uma letra ('A') ou de um campo em branco. A validação protege o processamento de 'quebrar'."
+            },
+            {
+                context: "App 3: Jokenpô",
+                question: "O requisito exige um Placar Contínuo. Se NÃO usarmos a função __init__ para criar o Estado inicial (self.pontos = 0), o que acontece?",
+                options: [
+                    "O jogo roda normalmente e guarda os pontos na nuvem.",
+                    "O placar é reiniciado para zero toda vez que o usuário clica num botão.",
+                    "A CPU passa a vencer todas as partidas.",
+                    "Os botões desaparecem da tela."
+                ],
+                correct: 1,
+                explanation: "Em análise de sistemas, se um dado precisa 'sobreviver' entre várias ações do usuário (cliques), ele deve ser mapeado como uma Variável de Estado (Memória contínua)."
+            },
+            {
+                context: "App 4: Quiz de Personalidade",
+                question: "Na regra de negócio, como o sistema decide qual personagem de Harry Potter venceu ao final do Quiz?",
+                options: [
+                    "Sorteia um personagem de forma completamente aleatória.",
+                    "Conta qual nome de personagem tem mais letras.",
+                    "Analisa o Dicionário e busca a Chave que possui o maior valor numérico somado (max).",
+                    "Abre uma janela e pergunta ao usuário quem ele quer ser."
+                ],
+                correct: 2,
+                explanation: "Essa é a Lógica de Processamento! Mapeamos os pontos em um Dicionário de Dados e aplicamos uma regra matemática embutida (a função max) para determinar a saída."
+            },
+            {
+                context: "App 4: Quiz de Personalidade",
+                question: "No fluxo do sistema, o que faz o bloqueio de segurança: 'if not (respondeu_q1 and respondeu_q2...)'?",
+                options: [
+                    "Indica que as perguntas estão muito difíceis.",
+                    "Garante o Requisito de que o usuário NÃO pode ver o resultado deixando perguntas em branco.",
+                    "Apaga os RadioButtons preenchidos da tela.",
+                    "Permite que o usuário pule as perguntas que não sabe."
+                ],
+                correct: 1,
+                explanation: "Barreira Lógica! O analista definiu que o cálculo da personalidade seria inválido se faltassem respostas, logo, criou-se essa barreira bloqueando o fluxo."
+            },
+            {
+                context: "App 5: RPG em Texto",
+                question: "O sistema precisa monitorar Vida, Energia e a Sala atual. Na análise, como chamamos essa necessidade de monitoramento?",
+                options: [
+                    "Design de Interface (UI).",
+                    "Requisito Não-Funcional de segurança de rede.",
+                    "Gestão de Estado do Jogo (Requisito Funcional).",
+                    "Protocolo de Banco de Dados SQL."
+                ],
+                correct: 2,
+                explanation: "Perfeito! Guardar a 'Memória' contínua do que está acontecendo (como a Vida do jogador e seus itens) é a Gestão de Estado. É vital para jogos e carrinhos de compra."
+            },
+            {
+                context: "App 5: RPG em Texto",
+                question: "Por que separamos a História do Jogo (Dicionário de Fases) da Lógica dos Botões (Data-Driven Design)?",
+                options: [
+                    "Para o código ficar propositalmente mais lento e dar tempo do usuário ler.",
+                    "Para podermos criar 100 fases novas apenas escrevendo texto, sem precisar mexer na lógica de programação.",
+                    "Porque o Anvil obriga que seja feito desta forma.",
+                    "Para usar mais memória RAM do computador."
+                ],
+                correct: 1,
+                explanation: "Isso é Arquitetura de Software! Separar Dados (Conteúdo) de Lógica (Motor de Renderização) permite escalar o aplicativo infinitamente sem transformar o código numa bagunça."
+            },
+            {
+                context: "App 6 e 7: C.R.U.D",
+                question: "Qual é a Regra de Negócio de Ouro para DELETAR uma Tarefa ou um Termo sem apagar os outros por engano?",
+                options: [
+                    "Apagar sempre a primeira palavra que aparecer na lista.",
+                    "O botão deve procurar pela cor do componente.",
+                    "Deletar a tela inteira e recriar os botões depois.",
+                    "Cada item deve ter um 'ID Único' gerado no cadastro para ser identificado de forma exclusiva na exclusão."
+                ],
+                correct: 3,
+                explanation: "Exatamente! Sem um ID (identificador) único, o sistema poderia apagar duas tarefas que tenham exatamente o mesmo nome. O ID garante precisão cirúrgica."
+            },
+            {
+                context: "App 7: Glossário e JSON",
+                question: "O requisito exige que a lista seja exportada. Por que convertemos os dados Python para JSON (json.dumps) antes de baixar?",
+                options: [
+                    "Porque JSON é a única linguagem de programação moderna.",
+                    "Para transformar a lista em um texto estruturado e universal que qualquer outro sistema/site consiga ler.",
+                    "Para deixar o arquivo mais pesado e difícil de hackear.",
+                    "Para mudar a formatação de cores e fonte do texto."
+                ],
+                correct: 1,
+                explanation: "JSON (JavaScript Object Notation) é o padrão universal de tráfego de dados na internet. Ele permite que nossos dados do Anvil sejam lidos por apps feitos em Java, C#, PHP, etc."
+            },
+            {
+                context: "Engenharia de Software",
+                question: "O que acontece se o programador ignorar as Etapas 1, 2 e 3 (Análise e Regras) e for direto digitar código na Etapa 7?",
+                options: [
+                    "O aplicativo fica mais rápido, pois corta burocracias.",
+                    "Ele programa perfeitamente o que o cliente quer, apenas usando intuição.",
+                    "Ele corre o grave risco de programar regras erradas, gerando retrabalho, perda de tempo e prejuízo financeiro.",
+                    "Os computadores modernos identificam a falta de análise e escrevem os requisitos sozinhos."
+                ],
+                correct: 2,
+                explanation: "A grande lição final: Código não conserta Análise ruim! Programar sem requisitos claros é como construir um prédio sem planta arquitetônica. O desabamento é garantido."
+            }
+        ];
+
+        // ==========================================
+        // VARIÁVEIS DE ESTADO
+        // ==========================================
+        let currentQuestion = 0;
+        let score = 0;
+        let streak = 0;
+
+        const letters = ['A', 'B', 'C', 'D'];
+
+        // ==========================================
+        // LÓGICA DE INTERFACE
+        // ==========================================
+        function loadQuestion() {
+            const q = questions[currentQuestion];
+            
+            // Atualiza Progresso
+            document.getElementById('progress').style.width = `${((currentQuestion) / questions.length) * 100}%`;
+            document.getElementById('q-counter').innerText = `${currentQuestion + 1}/${questions.length}`;
+            
+            // Textos
+            document.getElementById('app-context').innerText = q.context;
+            document.getElementById('question-text').innerText = q.question;
+            
+            // Botões de Opção
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+            
+            q.options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerHTML = `<div class="option-letter">${letters[index]}</div> <div>${opt}</div>`;
+                btn.onclick = () => checkAnswer(index, btn);
+                optionsContainer.appendChild(btn);
+            });
+
+            // Esconde Feedback
+            document.getElementById('feedback-area').classList.remove('show');
+            document.getElementById('btn-next').style.display = 'none';
+        }
+
+        function checkAnswer(selectedIndex, btnElement) {
+            const q = questions[currentQuestion];
+            const isCorrect = (selectedIndex === q.correct);
+            
+            // Desabilita todos os botões
+            const allBtns = document.querySelectorAll('.option-btn');
+            allBtns.forEach(b => b.disabled = true);
+
+            const feedbackArea = document.getElementById('feedback-area');
+            const feedbackTitle = document.getElementById('feedback-title');
+            
+            if (isCorrect) {
+                // Acertou
+                btnElement.classList.add('correct');
+                streak++;
+                let pointsEarned = 150 + (streak * 30); // Bônus progressivo
+                score += pointsEarned;
+                
+                feedbackArea.style.borderColor = "var(--success)";
+                feedbackArea.style.backgroundColor = "#ecfdf5";
+                feedbackTitle.innerHTML = `✅ Correto! 🔥 Combo x${streak} (+${pointsEarned} XP)`;
+                feedbackTitle.style.color = "var(--success)";
+                
+            } else {
+                // Errou
+                btnElement.classList.add('wrong');
+                allBtns[q.correct].classList.add('correct'); // Mostra a certa
+                streak = 0; // Zera a sequência
+                
+                feedbackArea.style.borderColor = "var(--danger)";
+                feedbackArea.style.backgroundColor = "#fef2f2";
+                feedbackTitle.innerHTML = `❌ Incorreto! (Combo Perdido)`;
+                feedbackTitle.style.color = "var(--danger)";
+            }
+
+            // Atualiza Placar e Explicação
+            document.getElementById('score').innerText = score;
+            document.getElementById('feedback-text').innerText = q.explanation;
+            
+            // Mostra Feedback e Botão Avançar
+            feedbackArea.classList.add('show');
+            document.getElementById('btn-next').style.display = 'block';
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                loadQuestion();
+            } else {
+                showRewards();
+            }
+        }
+
+        function showRewards() {
+            // Completou 100% da barra
+            document.getElementById('progress').style.width = `100%`;
+
+            document.getElementById('game-screen').style.display = 'none';
+            document.getElementById('reward-screen').style.display = 'block';
+            
+            document.getElementById('final-score').innerText = score;
+
+            let title, icon, badgesHtml = '';
+            
+            // Lógica de Recompensas baseada na Pontuação (Máx possível é ~3300)
+            if (score >= 2500) {
+                title = "Arquiteto Master!";
+                icon = "👑";
+                badgesHtml = `
+                    <div class="badge-card"><div class="badge-icon">🧠</div><div class="badge-name">Lógica Absoluta</div></div>
+                    <div class="badge-card"><div class="badge-icon">📋</div><div class="badge-name">Mestre dos Requisitos</div></div>
+                    <div class="badge-card"><div class="badge-icon">⚡</div><div class="badge-name">Engenheiro Anvil</div></div>
+                `;
+            } else if (score >= 1200) {
+                title = "Analista Pleno";
+                icon = "⭐";
+                badgesHtml = `
+                    <div class="badge-card"><div class="badge-icon">🧠</div><div class="badge-name">Lógica Afiada</div></div>
+                    <div class="badge-card"><div class="badge-icon">🔍</div><div class="badge-name">Bom Investigador</div></div>
+                `;
+            } else {
+                title = "Analista Júnior";
+                icon = "🌱";
+                badgesHtml = `
+                    <div class="badge-card"><div class="badge-icon">📖</div><div class="badge-name">Iniciante Promissor</div></div>
+                `;
+            }
+
+            document.getElementById('final-title').innerText = title;
+            document.getElementById('final-icon').innerText = icon;
+            document.getElementById('badges-container').innerHTML = badgesHtml;
+        }
+
+        // Inicia o Jogo
+        loadQuestion();
+    </script>
+</body>
+</html>

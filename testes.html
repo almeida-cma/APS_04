@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Quiz: Análise de Requisitos (Tema 04)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', 'Poppins', 'Roboto', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f0f7ff 0%, #e9eef5 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1rem;
+        }
+
+        /* Container principal do quiz */
+        .quiz-container {
+            max-width: 950px;
+            width: 100%;
+            background: white;
+            border-radius: 2.5rem;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        /* Header */
+        .quiz-header {
+            background: #0b2b44;
+            color: white;
+            padding: 1.8rem 2rem;
+            text-align: center;
+        }
+
+        .quiz-header h1 {
+            font-size: 1.9rem;
+            letter-spacing: -0.5px;
+            font-weight: 700;
+        }
+
+        .quiz-header p {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-top: 0.5rem;
+        }
+
+        .badge-tema {
+            background: #ffb74d;
+            color: #1e2a3a;
+            display: inline-block;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-top: 0.8rem;
+        }
+
+        /* Área de conteúdo principal */
+        .quiz-content {
+            padding: 2rem 2rem 1.8rem;
+        }
+
+        /* Barra de progresso */
+        .progress-area {
+            margin-bottom: 2rem;
+        }
+
+        .progress-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: #2c3e66;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .progress-bar-bg {
+            background: #e2e8f0;
+            border-radius: 20px;
+            height: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: #0f6b3a;
+            width: 0%;
+            height: 100%;
+            border-radius: 20px;
+            transition: width 0.3s ease;
+        }
+
+        /* Questão */
+        .question-text {
+            font-size: 1.65rem;
+            font-weight: 600;
+            color: #0f2b3d;
+            line-height: 1.3;
+            margin-bottom: 1.8rem;
+            border-left: 5px solid #1e88e5;
+            padding-left: 1rem;
+        }
+
+        /* Alternativas */
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .option-item {
+            background: #f9fafc;
+            border: 1.5px solid #dfe6ef;
+            border-radius: 1rem;
+            padding: 1rem 1.2rem;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option-item:hover {
+            background: #eef3fc;
+            border-color: #8bb9e0;
+            transform: translateX(4px);
+        }
+
+        .option-radio {
+            margin-right: 1rem;
+            width: 22px;
+            height: 22px;
+            accent-color: #0f6b3a;
+            cursor: pointer;
+        }
+
+        .option-label {
+            font-size: 1.05rem;
+            font-weight: 500;
+            color: #1f2e45;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        /* Botões navegação */
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+            gap: 1rem;
+        }
+
+        button {
+            background: #eef2f8;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: 0.2s;
+            color: #1e4663;
+        }
+
+        button.primary-btn {
+            background: #0b2b44;
+            color: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        button.primary-btn:hover {
+            background: #1a4b6e;
+            transform: scale(0.98);
+        }
+
+        button:active {
+            transform: scale(0.97);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Área de resultado (final) */
+        .result-area {
+            background: #fef7e0;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            border: 1px solid #ffe0a3;
+        }
+
+        .result-header {
+            font-size: 1.8rem;
+            font-weight: 800;
+            text-align: center;
+            color: #b45f06;
+        }
+
+        .score-detail {
+            font-size: 1.3rem;
+            text-align: center;
+            margin: 0.8rem 0;
+        }
+
+        .feedback-perfect {
+            background: #c8e6d9;
+            border-radius: 1rem;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .answers-review {
+            margin-top: 1.5rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .review-item {
+            background: white;
+            border-radius: 1rem;
+            margin-bottom: 0.8rem;
+            padding: 1rem;
+            border-left: 6px solid;
+        }
+
+        .review-correct {
+            border-left-color: #2b7a3e;
+        }
+
+        .review-wrong {
+            border-left-color: #c7362b;
+        }
+
+        .restart-btn {
+            background: #0b2b44;
+            color: white;
+            display: block;
+            width: 100%;
+            text-align: center;
+            margin-top: 1.5rem;
+            font-weight: bold;
+        }
+
+        footer {
+            text-align: center;
+            font-size: 0.75rem;
+            padding: 1rem;
+            background: #f8fafc;
+            color: #5a6e85;
+            border-top: 1px solid #e2edf7;
+        }
+
+        @media (max-width: 650px) {
+            .quiz-content {
+                padding: 1.5rem;
+            }
+            .question-text {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container" id="quizApp">
+    <div class="quiz-header">
+        <h1>📋 Análise de Requisitos</h1>
+        <p>Teste seus conhecimentos sobre coleta, modelos e gestão de requisitos</p>
+        <div class="badge-tema">🎯 TEMA 04 | Habilidades essenciais</div>
+    </div>
+
+    <div class="quiz-content" id="mainContent">
+        <!-- Conteúdo dinâmico (perguntas ou resultado) será injetado aqui -->
+    </div>
+    <footer>
+        📘 Baseado no conteúdo: Análise de Requisitos, modelos Cascata/Ágeis, elicitação e rastreabilidade.
+        <br>✅ Gabarito liberado SOMENTE ao finalizar o quiz.
+    </footer>
+</div>
+
+<script>
+    // --------------------------------------------------------------
+    // BANCO DE PERGUNTAS (10 questões sobre o tema)
+    // Cada questão: texto, alternativas, índice da correta (0-index)
+    // Conteúdo inspirado no material fornecido (requisitos funcionais, não funcionais,
+    // elicitação, cascata, ágil, rastreabilidade, validação, etc)
+    // --------------------------------------------------------------
+    const QUESTIONS = [
+        {
+            text: "Qual das alternativas descreve CORRETAMENTE um requisito funcional?",
+            options: [
+                "O sistema deve carregar qualquer página em menos de 2 segundos.",
+                "O sistema deve permitir que o usuário crie uma conta com e-mail e senha.",
+                "O sistema deve utilizar criptografia AES-256 para proteger dados.",
+                "O sistema deve estar disponível 99,9% do tempo."
+            ],
+            correct: 1,
+            explanation: "Requisitos funcionais descrevem funcionalidades/ações do sistema. 'Criar conta' é uma ação direta, enquanto os demais são não funcionais (desempenho, segurança, disponibilidade)."
+        },
+        {
+            text: "Sobre a análise de requisitos, assinale a afirmação VERDADEIRA:",
+            options: [
+                "É uma etapa opcional que pode ser ignorada em projetos pequenos.",
+                "Envolve apenas a documentação técnica sem contato com stakeholders.",
+                "É fundamental para compreender necessidades dos usuários e validar escopo.",
+                "Deve ser realizada somente após o desenvolvimento estar concluído."
+            ],
+            correct: 2,
+            explanation: "A análise de requisitos é etapa crítica para definir o que o sistema deve fazer, sempre com comunicação com stakeholders e validação."
+        },
+        {
+            text: "No contexto da elicitação de requisitos, qual técnica NÃO é comumente utilizada?",
+            options: [
+                "Entrevistas com stakeholders",
+                "Observação direta do usuário",
+                "Prototipagem interativa",
+                "Compilação automática de código-fonte"
+            ],
+            correct: 3,
+            explanation: "Compilação de código é atividade de implementação, não técnica de elicitação. As demais são clássicas para coletar requisitos."
+        },
+        {
+            text: "O modelo Cascata (Waterfall) no desenvolvimento de software se caracteriza por:",
+            options: [
+                "Entregas incrementais a cada duas semanas.",
+                "Processo sequencial com fases bem definidas: requisitos, design, implementação, testes, manutenção.",
+                "Iterações curtas com feedback contínuo do cliente.",
+                "Não permite documentação detalhada durante o projeto."
+            ],
+            correct: 1,
+            explanation: "Cascata é linear e sequencial, com fases rígidas. Os modelos ágeis (Scrum/Kanban) são iterativos com entregas frequentes."
+        },
+        {
+            text: "Um requisito não funcional importante relacionado à segurança de um sistema bancário é:",
+            options: [
+                "O sistema deve permitir transferências entre contas.",
+                "O cliente pode agendar pagamentos automáticos.",
+                "O sistema deve utilizar criptografia para senhas e dados sensíveis.",
+                "A tela inicial deve exibir extrato mensal."
+            ],
+            correct: 2,
+            explanation: "Criptografia é um atributo de segurança, característica de qualidade, portanto requisito não funcional. Os demais são funcionais."
+        },
+        {
+            text: "Sobre métodos ágeis aplicados a requisitos, é correto afirmar:",
+            options: [
+                "Os requisitos são completamente definidos antes do início do projeto e não mudam.",
+                "A equipe evita qualquer contato com o cliente após a análise inicial.",
+                "Os requisitos evoluem de forma iterativa, com entregas contínuas e feedback constante.",
+                "Não existe documentação de requisitos em métodos ágeis."
+            ],
+            correct: 2,
+            explanation: "Modelos ágeis (Scrum, XP) priorizam adaptação e evolução de requisitos com base no feedback, mas há documentação enxuta."
+        },
+        {
+            text: "Qual a principal finalidade da rastreabilidade de requisitos?",
+            options: [
+                "Dificultar mudanças nos requisitos ao longo do projeto.",
+                "Criar diagramas de caso de uso complexos.",
+                "Permitir acompanhar a origem de cada requisito e seu status até a implementação e testes.",
+                "Substituir o uso de ferramentas de gestão."
+            ],
+            correct: 2,
+            explanation: "Rastreabilidade conecta requisitos a artefatos, garantindo que todos sejam implementados e testados, facilitando controle de mudanças."
+        },
+        {
+            text: "Durante a validação de requisitos, o principal objetivo é:",
+            options: [
+                "Garantir que os requisitos estejam escritos em linguagem de programação.",
+                "Assegurar que os requisitos realmente atendem às necessidades dos stakeholders e são viáveis.",
+                "Compilar o código-fonte do sistema.",
+                "Eliminar todos os requisitos não funcionais."
+            ],
+            correct: 1,
+            explanation: "Validação confirma se os requisitos capturados representam as reais necessidades. Está ligada à 'fazer o produto certo'."
+        },
+        {
+            text: "Qual das alternativas apresenta APENAS exemplos de técnicas de modelagem de requisitos?",
+            options: [
+                "Diagramas de caso de uso, prototipagem, entrevistas",
+                "Compilador, IDE, debugger",
+                "Servidor web, banco de dados, firewall",
+                "Testes de unidade, integração contínua, deploy"
+            ],
+            correct: 0,
+            explanation: "Diagramas de caso de uso, prototipagem e entrevistas são técnicas de modelagem/elicitação. As outras opções referem-se a ferramentas técnicas de desenvolvimento."
+        },
+        {
+            text: "No gerenciamento de mudanças de requisitos, uma boa prática é:",
+            options: [
+                "Implementar todas as mudanças solicitadas imediatamente sem análise.",
+                "Recusar qualquer mudança após a primeira reunião de requisitos.",
+                "Avaliar impacto, priorizar e documentar mudanças por meio de um processo controlado.",
+                "Ignorar os stakeholders nos pedidos de mudança."
+            ],
+            correct: 2,
+            explanation: "Gerenciamento de mudanças exige análise de impacto, aprovação e comunicação, evitando descontrole do escopo."
+        }
+    ];
+
+    // Estado do quiz
+    let currentIndex = 0;               // índice da pergunta atual
+    let userAnswers = new Array(QUESTIONS.length).fill(null);   // armazena alternativa escolhida (0-index)
+    let quizFinished = false;            // se o quiz foi finalizado
+    let finalScore = 0;
+
+    // Elemento DOM onde o conteúdo será renderizado
+    const contentDiv = document.getElementById("mainContent");
+
+    // Função auxiliar: recalcula pontuação baseada nas respostas (sem exibir ainda se não finalizado)
+    function computeScore() {
+        let correctCount = 0;
+        for (let i = 0; i < QUESTIONS.length; i++) {
+            if (userAnswers[i] !== null && userAnswers[i] === QUESTIONS[i].correct) {
+                correctCount++;
+            }
+        }
+        return correctCount;
+    }
+
+    // Função que renderiza a view ativa: pergunta atual OU resultado final
+    function render() {
+        if (quizFinished) {
+            renderResultScreen();
+        } else {
+            renderQuestionScreen();
+        }
+    }
+
+    // Tela com a pergunta atual
+    function renderQuestionScreen() {
+        const q = QUESTIONS[currentIndex];
+        const selectedVal = userAnswers[currentIndex]; // pode ser null ou índice
+
+        // Calcula progresso
+        const answeredCount = userAnswers.filter(a => a !== null).length;
+        const percentProgress = (answeredCount / QUESTIONS.length) * 100;
+
+        let optionsHtml = '';
+        q.options.forEach((opt, idx) => {
+            const isChecked = (selectedVal === idx);
+            const radioId = `opt_${currentIndex}_${idx}`;
+            optionsHtml += `
+                <div class="option-item" data-opt-index="${idx}">
+                    <input type="radio" name="currentQuestion" id="${radioId}" value="${idx}" class="option-radio" ${isChecked ? 'checked' : ''}>
+                    <label for="${radioId}" class="option-label">${escapeHtml(opt)}</label>
+                </div>
+            `;
+        });
+
+        const totalQuestions = QUESTIONS.length;
+        const currentNumber = currentIndex + 1;
+
+        const html = `
+            <div class="progress-area">
+                <div class="progress-stats">
+                    <span>📌 Questão ${currentNumber} de ${totalQuestions}</span>
+                    <span>✅ Respondidas: ${answeredCount}/${totalQuestions}</span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div class="progress-fill" style="width: ${percentProgress}%;"></div>
+                </div>
+            </div>
+            <div class="question-text">${escapeHtml(q.text)}</div>
+            <div class="options-list" id="optionsContainer">
+                ${optionsHtml}
+            </div>
+            <div class="nav-buttons">
+                <button id="prevBtn" ${currentIndex === 0 ? 'disabled' : ''}>◀ Anterior</button>
+                <button id="nextBtn" class="primary-btn">${currentIndex === totalQuestions-1 ? 'Finalizar Quiz' : 'Próxima ▶'}</button>
+            </div>
+            <div style="margin-top: 1rem; font-size: 0.8rem; color: #2c5a7a; text-align: center;">
+                💡 O gabarito completo estará disponível APÓS finalizar todas as questões.
+            </div>
+        `;
+
+        contentDiv.innerHTML = html;
+
+        // Event listeners para as opções (clique em qualquer parte do container seleciona o radio)
+        const optionItems = document.querySelectorAll('.option-item');
+        optionItems.forEach(item => {
+            const radio = item.querySelector('input[type="radio"]');
+            item.addEventListener('click', (e) => {
+                // Evita conflito se clicar diretamente no radio
+                if (e.target.tagName !== 'INPUT') {
+                    if (radio) radio.checked = true;
+                    // Dispara evento change manualmente
+                    const changeEvent = new Event('change', { bubbles: true });
+                    radio.dispatchEvent(changeEvent);
+                }
+            });
+            if (radio) {
+                radio.addEventListener('change', (e) => {
+                    const selectedIdx = parseInt(e.target.value);
+                    // Salva resposta do usuário para pergunta atual
+                    userAnswers[currentIndex] = selectedIdx;
+                    // Re-renderiza para manter sincronia (visual e stats)
+                    render();  // Recarrega a mesma tela para atualizar progresso e radio checked
+                });
+            }
+        });
+
+        // Botão anterior
+        const prevBtn = document.getElementById('prevBtn');
+        if (prevBtn) {
+            prevBtn.addEventListener('click', () => {
+                if (currentIndex > 0) {
+                    currentIndex--;
+                    render();
+                }
+            });
+        }
+
+        // Botão próximo / finalizar
+        const nextBtn = document.getElementById('nextBtn');
+        if (nextBtn) {
+            nextBtn.addEventListener('click', () => {
+                // Se não respondeu a atual, podemos avisar mas não obrigamos? Entendo que pode deixar sem responder.
+                if (userAnswers[currentIndex] === null) {
+                    if (!confirm("Você ainda não selecionou uma resposta para esta questão. Deseja prosseguir mesmo assim? (A questão ficará como não respondida)")) {
+                        return;
+                    }
+                }
+                if (currentIndex === totalQuestions - 1) {
+                    // Finalizar quiz -> mostrar resultado (gabarito, pontuação, respostas)
+                    if (confirm("Você está prestes a FINALIZAR o quiz e verá seu desempenho completo. Deseja continuar?")) {
+                        finalizeQuiz();
+                    }
+                } else {
+                    // vai para próxima pergunta
+                    currentIndex++;
+                    render();
+                }
+            });
+        }
+    }
+
+    // Finaliza e exibe pontuação + gabarito completo
+    function finalizeQuiz() {
+        quizFinished = true;
+        finalScore = computeScore();
+        render();
+    }
+
+    // Renderiza tela de resultados com pontuação, gabarito e respostas
+    function renderResultScreen() {
+        const total = QUESTIONS.length;
+        const correctCount = finalScore;
+        const percentage = Math.round((correctCount / total) * 100);
+        
+        let performanceMessage = '';
+        if (percentage === 100) performanceMessage = '🏆 Perfeito! Você domina Análise de Requisitos! 🏆';
+        else if (percentage >= 70) performanceMessage = '👍 Muito bom! Reforce alguns conceitos e estará afiado.';
+        else if (percentage >= 50) performanceMessage = '📚 Bom estudo! Reveja os tópicos de elicitação e tipos de requisitos.';
+        else performanceMessage = '📖 Vale a pena revisar o conteúdo sobre modelos, rastreabilidade e validação.';
+
+        // Monta revisão detalhada de cada questão: resposta do usuário x correta
+        let reviewHtml = '';
+        for (let i = 0; i < QUESTIONS.length; i++) {
+            const q = QUESTIONS[i];
+            const userChoice = userAnswers[i];
+            const isCorrect = (userChoice !== null && userChoice === q.correct);
+            const userAnswerText = (userChoice !== null) ? q.options[userChoice] : '❌ Não respondida';
+            const correctAnswerText = q.options[q.correct];
+            const explanationText = q.explanation;
+            
+            const borderClass = isCorrect ? 'review-correct' : 'review-wrong';
+            const correctBadge = isCorrect ? '✅ Correta' : '❌ Incorreta';
+            
+            reviewHtml += `
+                <div class="review-item ${borderClass}">
+                    <div style="font-weight: 700; margin-bottom: 8px;">📌 ${escapeHtml(q.text)}</div>
+                    <div><span style="font-weight: 600;">Sua resposta:</span> ${escapeHtml(userAnswerText)}</div>
+                    <div><span style="font-weight: 600;">Resposta correta:</span> ${escapeHtml(correctAnswerText)}</div>
+                    <div style="margin-top: 8px; background: #f1f6fd; padding: 6px 10px; border-radius: 12px; font-size: 0.85rem;">
+                        💡 <strong>Explicação:</strong> ${escapeHtml(explanationText)}
+                    </div>
+                    <div style="margin-top: 6px; font-size: 0.8rem;"><strong>Status:</strong> ${correctBadge}</div>
+                </div>
+            `;
+        }
+
+        const resultHtml = `
+            <div class="result-area">
+                <div class="result-header">📊 RESULTADO FINAL</div>
+                <div class="score-detail">
+                    🎯 Pontuação: <strong style="font-size: 2rem;">${correctCount}/${total}</strong> (${percentage}%)
+                </div>
+                <div class="feedback-perfect">
+                    ${performanceMessage}
+                </div>
+                <div style="margin-top: 1.2rem; font-weight: 500; border-bottom: 1px solid #f3d9a4; padding-bottom: 6px;">
+                    🔍 GABARITO COMPLETO (respostas + explicações)
+                </div>
+                <div class="answers-review">
+                    ${reviewHtml}
+                </div>
+                <button id="restartQuizBtn" class="restart-btn">🔄 Refazer Quiz</button>
+            </div>
+        `;
+        
+        contentDiv.innerHTML = resultHtml;
+        
+        const restartBtn = document.getElementById('restartQuizBtn');
+        if (restartBtn) {
+            restartBtn.addEventListener('click', () => {
+                // Resetar todas as variáveis
+                resetQuiz();
+            });
+        }
+    }
+
+    // Função de reset total
+    function resetQuiz() {
+        userAnswers = new Array(QUESTIONS.length).fill(null);
+        currentIndex = 0;
+        quizFinished = false;
+        finalScore = 0;
+        render();
+    }
+
+    // Pequeno utilitário contra XSS
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    // Inicialização
+    render();
+</script>
+</body>
+</html>

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2 Exemplos de Histórias de Usuário</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f7fb;
+      margin: 0;
+      padding: 24px;
+      color: #1f2937;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+      margin-bottom: 24px;
+    }
+    h1, h2, h3 {
+      margin-top: 0;
+    }
+    .story {
+      background: #eef6ff;
+      border-left: 4px solid #2563eb;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+    }
+    .criteria {
+      margin-bottom: 20px;
+    }
+    .criteria li {
+      margin-bottom: 4px;
+    }
+    input[type="text"] {
+      width: 100%; 
+      padding: 10px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      box-sizing: border-box;
+    }
+    button {
+      background: #2563eb;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-right: 8px;
+    }
+    button:hover {
+      background: #1d4ed8;
+    }
+    .result {
+      margin-top: 12px;
+      padding: 12px;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      min-height: 24px;
+    }
+    .todo-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      margin-top: 8px;
+    }
+    .empty {
+      color: #6b7280;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1>2 Exemplos Simples de Histórias de Usuário com Front-end</h1>
+      <p>
+        Cada exemplo apresenta uma história de usuário, critérios de aceitação e uma implementação simples em HTML, CSS e JavaScript.
+      </p>
+    </div>
+
+    <!-- Exemplo 1 -->
+    <div class="card">
+      <h2>Exemplo 1: Saudação Personalizada</h2>
+
+      <div class="story">
+        <strong>Como visitante, eu quero digitar meu nome para receber uma saudação personalizada.</strong>
+      </div>
+
+      <div class="criteria">
+        <strong>Critérios de aceitação:</strong>
+        <ul>
+          <li>Campo para digitar o nome.</li>
+          <li>Botão para exibir a saudação.</li>
+          <li>Mensagem: "Olá, [nome]!".</li>
+        </ul>
+      </div>
+
+      <input type="text" id="nome" placeholder="Digite seu nome" />
+      <button onclick="saudar()">Saudar</button>
+
+      <div class="result" id="resultadoSaudacao">
+        A saudação aparecerá aqui.
+      </div>
+    </div>
+
+    <!-- Exemplo 2 -->
+    <div class="card">
+      <h2>Exemplo 2: Lista de Tarefas</h2>
+
+      <div class="story">
+        <strong>Como usuário, eu quero adicionar tarefas para organizar minhas atividades.</strong>
+      </div>
+
+      <div class="criteria">
+        <strong>Critérios de aceitação:</strong>
+        <ul>
+          <li>Campo para digitar a tarefa.</li>
+          <li>Botão para adicionar.</li>
+          <li>Lista atualizada em tempo real.</li>
+        </ul>
+      </div>
+
+      <input type="text" id="tarefa" placeholder="Digite uma tarefa" />
+      <button onclick="adicionarTarefa()">Adicionar</button>
+
+      <div class="result" id="listaTarefas">
+        <span class="empty">Nenhuma tarefa adicionada.</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function saudar() {
+      const nome = document.getElementById('nome').value.trim(); 
+      const resultado = document.getElementById('resultadoSaudacao');
+
+      if (!nome) {
+        resultado.textContent = 'Por favor, digite um nome.';
+        return;
+      }
+
+      resultado.textContent = `Olá, ${nome}!`;
+    }
+
+    const tarefas = [];
+
+    function adicionarTarefa() {
+      const input = document.getElementById('tarefa');
+      const texto = input.value.trim(); 
+
+      if (!texto) {
+        return;
+      }
+
+      tarefas.push(texto);
+      input.value = '';
+      renderizarTarefas();
+    }
+
+    function removerTarefa(indice) {
+      tarefas.splice(indice, 1);
+      renderizarTarefas();
+    }
+
+    function renderizarTarefas() {
+      const lista = document.getElementById('listaTarefas');
+
+      if (tarefas.length === 0) {
+        lista.innerHTML = '<span class="empty">Nenhuma tarefa adicionada.</span>';
+        return;
+      }
+
+      lista.innerHTML = tarefas
+        .map((tarefa, indice) => `
+          <div class="todo-item">
+            <span>${tarefa}</span>
+            <button onclick="removerTarefa(${indice})">Remover</button>
+          </div>
+        `)
+        .join('');
+    }
+  </script>
+</body>
+</html>
